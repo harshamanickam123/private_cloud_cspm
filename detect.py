@@ -4,6 +4,7 @@ import os
 import sys
 import logging
 import yaml
+import argparse
 from datetime import datetime
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -55,6 +56,33 @@ def run_scan(config):
     logging.info("Ansible scan completed successfully.")
     return True
 
+def run_remediation(config, limit_host=None):
+    """Run the Ansible remediation playbook to fix detected violations."""
+    logging.info("Starting remediation...")
+    cmd = ["ansible-playbook", "-i", config["ansible"]["inventory"], "ansible/remediate.yml"]
+    if limit_host:
+        cmd += ["--limit", limit_host]
+
+    try:
+        result = subprocess.run(
+            cmd,
+            cwd=BASE_DIR,
+            capture_output=True,
+            text=True,
+            timeout=300
+        )
+    except subprocess.TimeoutExpired:
+        logging.error("Remediation timed out after 300 seconds.")
+        return False
+
+    if result.returncode != 0:
+        logging.error("Remediation failed (exit code %d):\nSTDOUT:\n%s\nSTDERR:\n%s",
+                       result.returncode, result.stdout, result.stderr)
+        return False
+
+    logging.info("Remediation completed successfully.")
+    return True
+
 
 def check_policy(config, json_file):
     """Run OPA against one VM's JSON file, return list of violations (or None on failure)."""
@@ -103,10 +131,11 @@ def save_report(config, all_results, total_violations):
 
     logging.info("Report saved to %s", report_path)
 
-
-
-
 def main():
+    parser = argparse.ArgumentParser(description="CSPM detection and remediation tool")
+    parser.add_argument("--fix", action="store_true", help="Automatically remediate detected violations")
+    args = parser.parse_args()
+
     config = load_config()
     setup_logging(config)
 
@@ -143,6 +172,32 @@ def main():
     logging.info("Scan complete. Total violations across all hosts: %d", total_violations)
 
     save_report(config, all_results, total_violations)
+
+    if args.fix:
+        if total_violations == 0:
+            logging.info("No violations to remediate.")
+        else:
+            logging.info("--fix flag set: proceeding with remediation.")
+            if run_remediation(config):
+                logging.info("Re-scanning to verify remediation...")
+                if run_scan(config):
+                    post_fix_results = {}
+                    for filename in sorted(os.listdir(scan_dir)):
+                        if not filename.endswith(".json"):
+                            continue
+                        hostname = filename.replace(".json", "")
+                        filepath = os.path.join(scan_dir, filename)
+                        violations = check_policy(config, filepath)
+                        post_fix_results[hostname] = violations or []
+
+                    remaining = sum(len(v) for v in post_fix_results.values())
+                    logging.info("Post-remediation violations remaining: %d", remaining)
+                    save_report(config, post_fix_results, remaining)
+    else:
+        if total_violations > 0:
+            logging.info("Run with --fix to automatically remediate these violations.")
+
+
 
 if __name__ == "__main__":
     main()
