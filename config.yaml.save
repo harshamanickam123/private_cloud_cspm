@@ -1,0 +1,15 @@
+ansible:
+  inventory: ansible/inventory.ini
+  playbook: ansible/scan.yml
+
+opa:
+  policy_file: opa/cis.rego
+  policy_query: data.cis.den
+
+paths:
+  scan_results_dir: scan_results
+  reports_dir: reports
+
+logging:
+  log_file: logs/detect.log
+  level: INFO

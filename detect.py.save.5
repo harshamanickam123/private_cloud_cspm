@@ -1,0 +1,127 @@
+import subprocess
+import json
+import os
+import sys
+import logging
+import yaml
+from datetime import datetime
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+
+def load_config():
+    """Load settings from config.yaml instead of hardcoding them."""
+    config_path = os.path.join(BASE_DIR, "config.yaml")
+    with open(config_path, "r") as f:
+        return yaml.safe_load(f)
+
+
+def setup_logging(config):
+    """Configure logging to both file and console, instead of plain print()."""
+    log_path = os.path.join(BASE_DIR, config["logging"]["log_file"])
+    os.makedirs(os.path.dirname(log_path), exist_ok=True)
+
+    level = getattr(logging, config["logging"]["level"])
+
+    logging.basicConfig(
+        level=level,
+        format="%(asctime)s [%(levelname)s] %(message)s",
+        handlers=[
+            logging.FileHandler(log_path),
+            logging.StreamHandler(sys.stdout)
+        ]
+    )
+
+
+def run_scan(config):
+    """Run the Ansible playbook to refresh scan_results/*.json."""
+    logging.info("Starting Ansible scan...")
+    try:
+        result = subprocess.run(
+            ["ansible-playbook", "-i", config["ansible"]["inventory"], config["ansible"]["playbook"]],
+            cwd=BASE_DIR,
+            capture_output=True,
+            text=True,
+            timeout=300
+        )
+    except subprocess.TimeoutExpired:
+        logging.error("Ansible scan timed out after 300 seconds.")
+        return False
+
+    if result.returncode != 0:
+        logging.error("Ansible scan failed:\n%s", result.stderr)
+        return False
+
+    logging.info("Ansible scan completed successfully.")
+    return True
+
+
+def check_policy(config, json_file):
+    """Run OPA against one VM's JSON file, return list of violations (or None on failure)."""
+    try:
+        result = subprocess.run(
+            ["opa", "eval", "--format", "json",
+             "--data", config["opa"]["policy_file"],
+             "--input", json_file,
+             config["opa"]["policy_query"]],
+            cwd=BASE_DIR,
+            capture_output=True,
+            text=True,
+            timeout=30
+        )
+    except subprocess.TimeoutExpired:
+        logging.error("OPA evaluation timed out for %s", json_file)
+        return None
+
+    if result.returncode != 0:
+        logging.error("OPA evaluation failed for %s:\n%s", json_file, result.stderr)
+        return None
+
+    try:
+        output = json.loads(result.stdout)
+        return output["result"][0]["expressions"][0]["value"]
+    except (json.JSONDecodeError, KeyError, IndexError) as e:
+        logging.error("Failed to parse OPA output for %s: %s", json_file, e)
+        return None
+
+
+    config = load_config()
+    setup_logging(config)
+
+    if not run_scan(config):
+        logging.error("Aborting: scan step failed.")
+        sys.exit(1)
+
+    scan_dir = os.path.join(BASE_DIR, config["paths"]["scan_results_dir"])
+    all_results = {}
+
+    for filename in sorted(os.listdir(scan_dir)):
+        if not filename.endswith(".json"):
+            continue
+        hostname = filename.replace(".json", "")
+        filepath = os.path.join(scan_dir, filename)
+
+        violations = check_policy(config, filepath)
+        if violations is None:
+            logging.warning("Skipping %s due to policy check failure.", hostname)
+            continue
+
+        all_results[hostname] = violations
+
+    logging.info("=== CIS Compliance Report ===")
+    total_violations = 0
+    for hostname, violations in all_results.items():
+        if not violations:
+            logging.info("%s: No violations found.", hostname)
+        else:
+            logging.info("%s: %d violation(s) found:", hostname, len(violations))
+            for v in violations:
+                logging.info("  - %s", v)
+            total_violations += len(violations)
+
+    logging.info("Scan complete. Total violations across all hosts: %d", total_violations)
+
+
+if __name__ == "__main__":
+    main()
+def main():
+def m

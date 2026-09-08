@@ -1,0 +1,33 @@
+---
+- name: Scan VMs for CIS misconfigurations
+  hosts: vms
+  become: true
+  tasks:
+    - name: Get full sshd effective config
+      ansible.builtin.command: sshd -T
+      register: sshd_config_output
+      changed_when: false
+
+    - name: Get ufw firewall status
+      ansible.builtin.command: ufw status
+      register: ufw_status_output
+      changed_when: false
+
+    - name: Extract relevant settings into a clean fact
+      ansible.builtin.set_fact:
+        scan_result:
+          hostname: "{{ inventory_hostname }}"
+          permit_root_login: "{{ sshd_config_output.stdout_lines | select('match', '^permitrootlogin') | first }}"
+          password_authentication: "{{ sshd_config_output.stdout_lines | select('match', '^passwordauthentication') | first }}"
+          ufw_status: "{{ ufw_status_output.stdout_lines[0] }}"
+
+    - name: Show the clean scan result
+      ansible.builtin.debug:
+        var: scan_result
+
+    - name: Save scan result as JSON file
+      ansible.builtin.copy:
+        content: "{{ scan_result | to_nice_json }}"
+        dest: "{{ playbook_dir }}/../scan_results/{{ inventory_hostname }}.json"
+      delegate_to: localhost
+      become: false

@@ -1,0 +1,6 @@
+logs/
+reports/
+scan_results/
+__pycache__/
+*.pyc
+.venv/
