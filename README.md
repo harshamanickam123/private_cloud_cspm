@@ -31,11 +31,15 @@ Configure target VMs in ansible/inventory.ini.
 
 ## Usage
 
-Run a full scan and policy evaluation:
+Scan and report violations only:
 
 python3 detect.py
 
-Produces a timestamped compliance report under reports/.
+Scan, then automatically remediate any violations found and re-verify:
+
+python3 detect.py --fix
+
+Both produce a timestamped compliance report under reports/.
 
 Run policy unit tests:
 
