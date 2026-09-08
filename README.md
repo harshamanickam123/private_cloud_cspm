@@ -47,7 +47,14 @@ Current CIS-derived checks:
 
 - SSH root login must be disabled
 - SSH password authentication must be disabled
+- SSH MaxAuthTries must not exceed 4
+- SSH X11 forwarding must be disabled
+- SSH PermitEmptyPasswords must be disabled
+- SSH IgnoreRhosts must be enabled
+- SSH ClientAliveInterval must be set (nonzero)
 - Host firewall must be active
+- Automatic security updates must be enabled
+- Password maximum age must not exceed 90 days
 
 ## Status
 

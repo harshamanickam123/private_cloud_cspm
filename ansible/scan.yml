@@ -13,13 +13,31 @@
       register: ufw_status_output
       changed_when: false
 
+    - name: Get unattended-upgrades service status
+      ansible.builtin.command: systemctl is-enabled unattended-upgrades
+      register: unattended_upgrades_output
+      changed_when: false
+      failed_when: false
+
+    - name: Get PASS_MAX_DAYS from login.defs
+      ansible.builtin.shell: grep -E "^PASS_MAX_DAYS" /etc/login.defs | awk '{print $2}'
+      register: pass_max_days_output
+      changed_when: false
+
     - name: Extract relevant settings into a clean fact
       ansible.builtin.set_fact:
         scan_result:
           hostname: "{{ inventory_hostname }}"
           permit_root_login: "{{ sshd_config_output.stdout_lines | select('match', '^permitrootlogin') | first }}"
           password_authentication: "{{ sshd_config_output.stdout_lines | select('match', '^passwordauthentication') | first }}"
+          max_auth_tries: "{{ sshd_config_output.stdout_lines | select('match', '^maxauthtries') | first }}"
+          x11_forwarding: "{{ sshd_config_output.stdout_lines | select('match', '^x11forwarding') | first }}"
+          permit_empty_passwords: "{{ sshd_config_output.stdout_lines | select('match', '^permitemptypasswords') | first }}"
+          ignore_rhosts: "{{ sshd_config_output.stdout_lines | select('match', '^ignorerhosts') | first }}"
+          client_alive_interval: "{{ sshd_config_output.stdout_lines | select('match', '^clientaliveinterval') | first }}"
           ufw_status: "{{ ufw_status_output.stdout_lines[0] }}"
+          unattended_upgrades: "{{ unattended_upgrades_output.stdout | trim }}"
+          pass_max_days: "{{ pass_max_days_output.stdout | trim }}"
 
     - name: Show the clean scan result
       ansible.builtin.debug:
