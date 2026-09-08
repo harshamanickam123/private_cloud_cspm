@@ -58,4 +58,4 @@ Current CIS-derived checks:
 
 ## Status
 
-The detection pipeline (scan → policy evaluation → report) is complete and tested. This is an evolving project — automated remediation, a persistent reporting dashboard, CI/CD, and infrastructure-as-code are planned as future work.
+The full detect-and-remediate loop is complete and tested: scan → policy evaluation → report → automated remediation → re-scan verification. This is an evolving project — a persistent reporting dashboard, CI/CD, and infrastructure-as-code are planned as future work.

@@ -1,0 +1,76 @@
+---
+- name: Remediate CIS violations
+  hosts: vms
+  become: true
+  tasks:
+    - name: Fix - Disable SSH root login
+      ansible.builtin.lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^#?PermitRootLogin'
+        line: 'PermitRootLogin no'
+      notify: Restart ssh
+
+    - name: Fix - Disable SSH password authentication
+      ansible.builtin.lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^#?PasswordAuthentication'
+        line: 'PasswordAuthentication no'
+      notify: Restart ssh
+
+    - name: Fix - Disable SSH password authentication in cloud-init drop-in
+      ansible.builtin.lineinfile:
+        path: /etc/ssh/sshd_config.d/50-cloud-init.conf
+        regexp: '^PasswordAuthentication'
+        line: 'PasswordAuthentication no'
+        create: false
+      notify: Restart ssh
+      ignore_errors: true
+
+    - name: Fix - Set SSH MaxAuthTries to 4
+      ansible.builtin.lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^#?MaxAuthTries'
+        line: 'MaxAuthTries 4'
+      notify: Restart ssh
+
+    - name: Fix - Disable SSH X11 forwarding
+      ansible.builtin.lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^#?X11Forwarding'
+        line: 'X11Forwarding no'
+      notify: Restart ssh
+
+    - name: Fix - Set SSH ClientAliveInterval
+      ansible.builtin.lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^#?ClientAliveInterval'
+        line: 'ClientAliveInterval 300'
+      notify: Restart ssh
+
+    - name: Fix - Allow SSH before enabling firewall
+      community.general.ufw:
+        rule: allow
+        port: '22'
+        proto: tcp
+
+    - name: Fix - Enable UFW firewall
+      community.general.ufw:
+        state: enabled
+
+    - name: Fix - Enable unattended-upgrades
+      ansible.builtin.systemd:
+        name: unattended-upgrades
+        enabled: true
+        state: started
+
+    - name: Fix - Set password max age
+      ansible.builtin.lineinfile:
+        path: /etc/login.defs
+        regexp: '^PASS_MAX_DAYS'
+        line: 'PASS_MAX_DAYS   90'
+
+  handlers:
+    - name: Restart ssh
+      ansible.builtin.systemd:
+        name: ssh
+        state: restarted
