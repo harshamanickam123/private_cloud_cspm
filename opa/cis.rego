@@ -48,3 +48,27 @@ deny contains msg if {
     to_number(input.pass_max_days) > 90
     msg := sprintf("%s: Password max age exceeds 90 days (CIS violation)", [input.hostname])
 }
+deny contains msg if {
+    to_number(split(input.login_grace_time, " ")[1]) > 60
+    msg := sprintf("%s: SSH LoginGraceTime exceeds 60 seconds (CIS violation)", [input.hostname])
+}
+
+deny contains msg if {
+    input.log_level == "loglevel QUIET"
+    msg := sprintf("%s: SSH LogLevel is set to QUIET (CIS violation)", [input.hostname])
+}
+
+deny contains msg if {
+    to_number(input.passwd_perms) > 644
+    msg := sprintf("%s: /etc/passwd permissions are too permissive (CIS violation)", [input.hostname])
+}
+
+deny contains msg if {
+    to_number(input.shadow_perms) > 640
+    msg := sprintf("%s: /etc/shadow permissions are too permissive (CIS violation)", [input.hostname])
+}
+
+deny contains msg if {
+    input.suid_dumpable != "0"
+    msg := sprintf("%s: Core dumps are not restricted (fs.suid_dumpable != 0) (CIS violation)", [input.hostname])
+}

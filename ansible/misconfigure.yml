@@ -1,120 +1,121 @@
 ---
-- name: Remediate CIS violations
+- name: Intentionally misconfigure VMs for demo/testing purposes
   hosts: vms
   become: true
   tasks:
-    - name: Fix - Disable SSH root login
+    - name: Break - Enable SSH root login
       ansible.builtin.lineinfile:
         path: /etc/ssh/sshd_config
         regexp: '^#?PermitRootLogin'
-        line: 'PermitRootLogin no'
+        line: 'PermitRootLogin yes'
       notify: Restart ssh
 
-    - name: Fix - Disable SSH password authentication
+    - name: Break - Enable SSH password authentication
       ansible.builtin.lineinfile:
         path: /etc/ssh/sshd_config
         regexp: '^#?PasswordAuthentication'
-        line: 'PasswordAuthentication no'
+        line: 'PasswordAuthentication yes'
       notify: Restart ssh
 
-    - name: Fix - Disable SSH password authentication in cloud-init drop-in
+    - name: Break - Enable SSH password authentication in cloud-init drop-in
       ansible.builtin.lineinfile:
         path: /etc/ssh/sshd_config.d/50-cloud-init.conf
         regexp: '^PasswordAuthentication'
-        line: 'PasswordAuthentication no'
+        line: 'PasswordAuthentication yes'
         create: false
       notify: Restart ssh
       ignore_errors: true
 
-    - name: Fix - Set SSH MaxAuthTries to 4
+    - name: Break - Set SSH MaxAuthTries too high
       ansible.builtin.lineinfile:
         path: /etc/ssh/sshd_config
         regexp: '^#?MaxAuthTries'
-        line: 'MaxAuthTries 4'
+        line: 'MaxAuthTries 6'
       notify: Restart ssh
 
-    - name: Fix - Disable SSH X11 forwarding
+    - name: Break - Enable SSH X11 forwarding
       ansible.builtin.lineinfile:
         path: /etc/ssh/sshd_config
         regexp: '^#?X11Forwarding'
-        line: 'X11Forwarding no'
+        line: 'X11Forwarding yes'
       notify: Restart ssh
 
-    - name: Fix - Set SSH ClientAliveInterval
+    - name: Break - Unset SSH ClientAliveInterval
       ansible.builtin.lineinfile:
         path: /etc/ssh/sshd_config
         regexp: '^#?ClientAliveInterval'
-        line: 'ClientAliveInterval 300'
+        line: 'ClientAliveInterval 0'
       notify: Restart ssh
 
-    - name: Fix - Allow SSH before enabling firewall
+    - name: Break - Allow SSH before disabling firewall (avoid lockout)
       community.general.ufw:
         rule: allow
         port: '22'
         proto: tcp
 
-    - name: Fix - Enable UFW firewall
+    - name: Break - Disable UFW firewall
       community.general.ufw:
-        state: enabled
+        state: disabled
 
-    - name: Fix - Enable unattended-upgrades
-      ansible.builtin.systemd:
-        name: unattended-upgrades
-        enabled: true
-        state: started
-
-    - name: Fix - Set password max age
+    - name: Break - Set password max age too high
       ansible.builtin.lineinfile:
         path: /etc/login.defs
         regexp: '^PASS_MAX_DAYS'
-        line: 'PASS_MAX_DAYS   90'
-    - name: Fix - Set SSH LoginGraceTime
+        line: 'PASS_MAX_DAYS   99999'
+
+    - name: Break - Set SSH LoginGraceTime too high
       ansible.builtin.lineinfile:
         path: /etc/ssh/sshd_config
         regexp: '^#?LoginGraceTime'
-        line: 'LoginGraceTime 60'
+        line: 'LoginGraceTime 120'
       notify: Restart ssh
 
-    - name: Fix - Set SSH LogLevel
+    - name: Break - Set SSH LogLevel to QUIET
       ansible.builtin.lineinfile:
         path: /etc/ssh/sshd_config
         regexp: '^#?LogLevel'
-        line: 'LogLevel INFO'
+        line: 'LogLevel QUIET'
       notify: Restart ssh
 
-    - name: Fix - Set /etc/passwd permissions
+    - name: Break - Loosen /etc/passwd permissions
       ansible.builtin.file:
         path: /etc/passwd
-        mode: '0644'
+        mode: '0666'
 
-    - name: Fix - Set /etc/shadow permissions
+    - name: Break - Loosen /etc/shadow permissions
       ansible.builtin.file:
         path: /etc/shadow
-        mode: '0640'
+        mode: '0644'
 
-    - name: Fix - Restrict core dumps (suid_dumpable)
+    - name: Break - Allow core dumps (suid_dumpable)
       ansible.posix.sysctl:
         name: fs.suid_dumpable
-        value: '0'
+        value: '2'
         state: present
         reload: true
-    - name: Fix - Disable PermitEmptyPasswords
+
+    - name: Break - Enable PermitEmptyPasswords
       ansible.builtin.lineinfile:
         path: /etc/ssh/sshd_config
         regexp: '^#?PermitEmptyPasswords'
-        line: 'PermitEmptyPasswords no'
+        line: 'PermitEmptyPasswords yes'
       notify: Restart ssh
 
-    - name: Fix - Enable IgnoreRhosts
+    - name: Break - Disable IgnoreRhosts
       ansible.builtin.lineinfile:
         path: /etc/ssh/sshd_config
         regexp: '^#?IgnoreRhosts'
-        line: 'IgnoreRhosts yes'
+        line: 'IgnoreRhosts no'
       notify: Restart ssh
+
+    - name: Break - Disable unattended-upgrades
+      ansible.builtin.systemd:
+        name: unattended-upgrades
+        enabled: false
+        state: stopped
 
   handlers:
     - name: Restart ssh
       ansible.builtin.systemd:
         name: ssh
         state: restarted
-

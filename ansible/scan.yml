@@ -24,6 +24,18 @@
       register: pass_max_days_output
       changed_when: false
 
+    - name: Get file permissions for /etc/passwd and /etc/shadow
+      ansible.builtin.shell: |
+        echo "passwd:$(stat -c '%a' /etc/passwd)"
+        echo "shadow:$(stat -c '%a' /etc/shadow)"
+      register: file_perms_output
+      changed_when: false
+
+    - name: Get fs.suid_dumpable sysctl value
+      ansible.builtin.command: sysctl -n fs.suid_dumpable
+      register: suid_dumpable_output
+      changed_when: false
+
     - name: Extract relevant settings into a clean fact
       ansible.builtin.set_fact:
         scan_result:
@@ -38,6 +50,11 @@
           ufw_status: "{{ ufw_status_output.stdout_lines[0] }}"
           unattended_upgrades: "{{ unattended_upgrades_output.stdout | trim }}"
           pass_max_days: "{{ pass_max_days_output.stdout | trim }}"
+          login_grace_time: "{{ sshd_config_output.stdout_lines | select('match', '^logingracetime') | first }}"
+          log_level: "{{ sshd_config_output.stdout_lines | select('match', '^loglevel') | first }}"
+          passwd_perms: "{{ file_perms_output.stdout_lines[0].split(':')[1] }}"
+          shadow_perms: "{{ file_perms_output.stdout_lines[1].split(':')[1] }}"
+          suid_dumpable: "{{ suid_dumpable_output.stdout | trim }}"
 
     - name: Show the clean scan result
       ansible.builtin.debug:
