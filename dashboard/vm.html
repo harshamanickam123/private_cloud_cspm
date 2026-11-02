@@ -12,6 +12,9 @@
 
     <title>SENTINELFORGE - Virtual Machines</title>
 
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
     <style>
 
         * {
@@ -666,6 +669,322 @@
 
         }
 
+
+
+        /* ==================================================
+           VISUAL ALIGNMENT WITH SENTINELFORGE DASHBOARD
+           CSS ONLY — EXISTING FUNCTIONALITY PRESERVED
+           ================================================== */
+
+        /* SIDEBAR */
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 280px;
+            height: 100vh;
+            padding: 24px 16px;
+            background: #0b1220;
+            border-right: 1px solid #263449;
+            box-shadow: 8px 0 30px rgba(0, 0, 0, 0.35);
+            z-index: 9999;
+            overflow-y: auto;
+        }
+
+        .brand {
+            min-height: 70px;
+            gap: 15px;
+            padding: 0 14px;
+            margin-bottom: 25px;
+        }
+
+        .brand-icon {
+            width: 46px;
+            height: 46px;
+            flex-shrink: 0;
+            border-radius: 13px;
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            font-size: 23px;
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.40);
+        }
+
+        .brand-name {
+            font-size: 25px;
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+
+        .nav {
+            gap: 7px;
+        }
+
+        .nav a {
+            min-height: 52px;
+            padding: 0 17px;
+            gap: 16px;
+            border: 1px solid transparent;
+            border-radius: 11px;
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: 0.2px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-icon {
+            width: 25px;
+            flex-shrink: 0;
+            font-size: 19px;
+        }
+
+        .nav a:hover {
+            color: #fff;
+            background: #17243a;
+            border-color: #2c405f;
+        }
+
+        .nav a.active {
+            color: #fff;
+            background: linear-gradient(90deg, #1d4ed8, #3730a3);
+            border-color: #4f72d8;
+            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.28);
+        }
+
+        /* MAIN CONTENT */
+
+        .main {
+            flex: 0 0 calc(100% - 280px);
+            width: calc(100% - 280px);
+            min-width: 0;
+            margin-left: 280px;
+            padding: 25px;
+        }
+
+        .page-header {
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .page-header h1 {
+            font-size: 32px;
+            line-height: 1.3;
+        }
+
+        .page-header p {
+            font-size: 14px;
+            line-height: 1.6;
+            margin-top: 7px;
+        }
+
+        /* BUTTONS */
+
+        .top-actions {
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 10px 16px;
+            border-radius: 7px;
+            font-size: 13px;
+        }
+
+        /* SUMMARY CARDS */
+
+        .summary-grid {
+            gap: 18px;
+            margin-bottom: 22px;
+        }
+
+        .summary-card {
+            min-height: 135px;
+            padding: 20px;
+            border-radius: 12px;
+        }
+
+        .summary-icon {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .summary-label {
+            font-size: 13px;
+            margin-bottom: 7px;
+        }
+
+        .summary-value {
+            font-size: 30px;
+        }
+
+        /* PANELS */
+
+        .panel {
+            margin-bottom: 20px;
+            border-radius: 11px;
+        }
+
+        .panel-header {
+            padding: 17px 20px;
+            font-size: 17px;
+        }
+
+        .panel-body {
+            padding: 16px;
+        }
+
+        /* VM TABLE */
+
+        th {
+            padding: 14px 16px;
+            font-size: 12px;
+        }
+
+        td {
+            padding: 15px 16px;
+            font-size: 13px;
+        }
+
+        .vm-name-cell {
+            gap: 10px;
+        }
+
+        .vm-name-cell small {
+            font-size: 11px;
+        }
+
+        .view-button {
+            padding: 8px 14px;
+            font-size: 12px;
+        }
+
+        .status-badge {
+            font-size: 12px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+        }
+
+        /* VM DETAILS */
+
+        .details-header {
+            padding: 17px 20px;
+        }
+
+        .details-title {
+            font-size: 17px;
+        }
+
+        .details-subtitle {
+            font-size: 12px;
+        }
+
+        .close-button {
+            padding: 7px 12px;
+            font-size: 12px;
+        }
+
+        .detail-grid {
+            gap: 14px;
+            padding: 16px;
+        }
+
+        .detail-card {
+            min-height: 85px;
+            padding: 15px;
+            border-radius: 9px;
+        }
+
+        .detail-label {
+            font-size: 12px;
+            margin-bottom: 9px;
+        }
+
+        .detail-value {
+            font-size: 14px;
+        }
+
+        /* ACTIVITY */
+
+        .activity-section {
+            padding: 0 16px 18px;
+        }
+
+        .activity-title {
+            font-size: 13px;
+            margin: 7px 0 10px;
+        }
+
+        .activity-item {
+            padding: 12px 14px;
+            font-size: 12px;
+        }
+
+        .activity-time {
+            min-width: 75px;
+        }
+
+        .empty-log {
+            padding: 18px;
+            font-size: 12px;
+        }
+
+        /* TOAST */
+
+        .toast {
+            padding: 13px 16px;
+            font-size: 12px;
+        }
+
+        /* RESPONSIVE ALIGNMENT */
+
+        @media (max-width: 1000px) {
+            .sidebar {
+                width: 240px;
+            }
+
+            .main {
+                flex-basis: calc(100% - 240px);
+                width: calc(100% - 240px);
+                margin-left: 240px;
+            }
+        }
+
+        @media (max-width: 760px) {
+            .sidebar {
+                width: 78px;
+                padding: 20px 10px;
+            }
+
+            .brand {
+                justify-content: center;
+                padding: 0;
+            }
+
+            .brand-name,
+            .nav span:not(.nav-icon) {
+                display: none;
+            }
+
+            .nav a {
+                justify-content: center;
+                padding: 0;
+                gap: 0;
+            }
+
+            .nav-icon {
+                width: auto;
+            }
+
+            .main {
+                flex-basis: calc(100% - 78px);
+                width: calc(100% - 78px);
+                margin-left: 78px;
+                padding: 18px;
+            }
+        }
+
+
     </style>
 
 </head>
@@ -685,7 +1004,7 @@
         <div class="brand">
 
             <div class="brand-icon">
-                ◇
+                <i class="fa-solid fa-shield-halved"></i>
             </div>
 
             <div class="brand-name">
@@ -698,35 +1017,35 @@
         <nav class="nav">
 
             <a href="index.html">
-                <span class="nav-icon">⌁</span>
+                <span class="nav-icon"><i class="fa-solid fa-chart-line"></i></span>
                 <span>Dashboard</span>
             </a>
 
             <a href="vm.html"
                class="active">
 
-                <span class="nav-icon">▤</span>
+                <span class="nav-icon"><i class="fa-solid fa-server"></i></span>
                 <span>Virtual Machines</span>
 
             </a>
 
             <a href="compliance.html">
 
-                <span class="nav-icon">◆</span>
+                <span class="nav-icon"><i class="fa-solid fa-shield"></i></span>
                 <span>Compliance</span>
 
             </a>
 
             <a href="security.html">
 
-                <span class="nav-icon">♙</span>
+                <span class="nav-icon"><i class="fa-solid fa-bug"></i></span>
                 <span>Security</span>
 
             </a>
 
             <a href="drift.html">
 
-                <span class="nav-icon">⟳</span>
+                <span class="nav-icon"><i class="fa-solid fa-arrow-right-arrow-left"></i></span>
                 <span>Drift Detection</span>
 
             </a>
@@ -735,28 +1054,28 @@
 
             <a href="patch.html">
 
-                <span class="nav-icon">⇩</span>
+                <span class="nav-icon"><i class="fa-solid fa-download"></i></span>
                 <span>Patch</span>
 
             </a>
 
             <a href="remediation.html">
 
-                <span class="nav-icon">⚒</span>
+                <span class="nav-icon"><i class="fa-solid fa-screwdriver-wrench"></i></span>
                 <span>Remediation</span>
 
             </a>
 
             <a href="reports.html">
 
-                <span class="nav-icon">▤</span>
+                <span class="nav-icon"><i class="fa-solid fa-file-lines"></i></span>
                 <span>Reports</span>
 
             </a>
 
             <a href="settings.html">
 
-                <span class="nav-icon">⚙</span>
+                <span class="nav-icon"><i class="fa-solid fa-gear"></i></span>
                 <span>Settings</span>
 
             </a>
