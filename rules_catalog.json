@@ -1,0 +1,160 @@
+{
+  "framework": {
+    "name": "CIS",
+    "type": "CIS-aligned",
+    "target": "Linux",
+    "version": "1.0"
+  },
+  "rules": [
+    {
+      "rule_id": "CSPM-SSH-001",
+      "field": "permit_root_login",
+      "name": "SSH Root Login",
+      "category": "Access Control",
+      "severity": "HIGH",
+      "description": "SSH root login should be disabled.",
+      "expected_contains": "no",
+      "remediation": "Set PermitRootLogin no in sshd_config."
+    },
+    {
+      "rule_id": "CSPM-SSH-002",
+      "field": "password_authentication",
+      "name": "SSH Password Authentication",
+      "category": "Authentication",
+      "severity": "MEDIUM",
+      "description": "SSH password authentication should be disabled.",
+      "expected_contains": "no",
+      "remediation": "Set PasswordAuthentication no in sshd_config."
+    },
+    {
+      "rule_id": "CSPM-SSH-003",
+      "field": "max_auth_tries",
+      "name": "SSH Max Auth Tries",
+      "category": "Access Control",
+      "severity": "LOW",
+      "description": "SSH MaxAuthTries should be limited.",
+      "expected_max": 4,
+      "remediation": "Set MaxAuthTries 4 in sshd_config."
+    },
+    {
+      "rule_id": "CSPM-SSH-004",
+      "field": "x11_forwarding",
+      "name": "SSH X11 Forwarding",
+      "category": "Access Control",
+      "severity": "LOW",
+      "description": "X11 forwarding should be disabled.",
+      "expected_contains": "no",
+      "remediation": "Set X11Forwarding no in sshd_config."
+    },
+    {
+      "rule_id": "CSPM-SSH-005",
+      "field": "client_alive_interval",
+      "name": "SSH Client Alive Interval",
+      "category": "Session Management",
+      "severity": "LOW",
+      "description": "Idle SSH sessions should time out.",
+      "expected_min": 1,
+      "remediation": "Set ClientAliveInterval 300 in sshd_config."
+    },
+    {
+      "rule_id": "CSPM-SSH-006",
+      "field": "login_grace_time",
+      "name": "SSH Login Grace Time",
+      "category": "Session Management",
+      "severity": "LOW",
+      "description": "SSH login grace time should not be excessive.",
+      "expected_max": 60,
+      "remediation": "Set LoginGraceTime 60 in sshd_config."
+    },
+    {
+      "rule_id": "CSPM-SSH-007",
+      "field": "log_level",
+      "name": "SSH Log Level",
+      "category": "Logging",
+      "severity": "MEDIUM",
+      "description": "SSH logging should be set to INFO or higher.",
+      "expected_contains": "info",
+      "remediation": "Set LogLevel INFO in sshd_config."
+    },
+    {
+      "rule_id": "CSPM-SSH-008",
+      "field": "permit_empty_passwords",
+      "name": "SSH Empty Passwords",
+      "category": "Authentication",
+      "severity": "HIGH",
+      "description": "Empty password logins should not be permitted.",
+      "expected_contains": "no",
+      "remediation": "Set PermitEmptyPasswords no in sshd_config."
+    },
+    {
+      "rule_id": "CSPM-SSH-009",
+      "field": "ignore_rhosts",
+      "name": "SSH IgnoreRhosts",
+      "category": "Authentication",
+      "severity": "MEDIUM",
+      "description": "Rhosts-based authentication should be ignored.",
+      "expected_contains": "yes",
+      "remediation": "Set IgnoreRhosts yes in sshd_config."
+    },
+    {
+      "rule_id": "CSPM-FW-001",
+      "field": "ufw_status",
+      "name": "Host Firewall",
+      "category": "Network Security",
+      "severity": "HIGH",
+      "description": "The host firewall should be enabled.",
+      "expected_contains": "active",
+      "remediation": "Enable ufw."
+    },
+    {
+      "rule_id": "CSPM-SYS-001",
+      "field": "pass_max_days",
+      "name": "Password Max Age",
+      "category": "Account Policy",
+      "severity": "MEDIUM",
+      "description": "Passwords should expire within a reasonable window.",
+      "expected_max": 90,
+      "remediation": "Set PASS_MAX_DAYS 90 in login.defs."
+    },
+    {
+      "rule_id": "CSPM-FS-001",
+      "field": "passwd_perms",
+      "name": "/etc/passwd Permissions",
+      "category": "File Permissions",
+      "severity": "MEDIUM",
+      "description": "/etc/passwd should not be world-writable.",
+      "expected_exact": "644",
+      "remediation": "chmod 644 /etc/passwd."
+    },
+    {
+      "rule_id": "CSPM-FS-002",
+      "field": "shadow_perms",
+      "name": "/etc/shadow Permissions",
+      "category": "File Permissions",
+      "severity": "HIGH",
+      "description": "/etc/shadow should not be readable by non-root.",
+      "expected_exact": "640",
+      "remediation": "chmod 640 /etc/shadow."
+    },
+    {
+      "rule_id": "CSPM-SYS-002",
+      "field": "suid_dumpable",
+      "name": "Core Dump Restriction",
+      "category": "System Hardening",
+      "severity": "MEDIUM",
+      "description": "Core dumps should be restricted (fs.suid_dumpable=0).",
+      "expected_exact": "0",
+      "remediation": "Set fs.suid_dumpable=0 via sysctl."
+    },
+    {
+      "rule_id": "CSPM-SVC-001",
+      "field": "unattended_upgrades",
+      "name": "Automatic Security Updates",
+      "category": "Patch Management",
+      "severity": "MEDIUM",
+      "description": "Unattended upgrades should be enabled.",
+      "expected_contains": "enabled",
+      "remediation": "systemctl enable unattended-upgrades."
+    }
+  ]
+}

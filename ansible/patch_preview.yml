@@ -1,0 +1,28 @@
+---
+- name: Preview package updates without installing them
+  hosts: vms
+  gather_facts: false
+  become: true
+
+  tasks:
+    - name: Simulate standard package upgrade
+      ansible.builtin.command:
+        argv:
+          - apt-get
+          - -s
+          - upgrade
+      register: upgrade_preview
+      changed_when: false
+
+    - name: Save preview result on controller
+      ansible.builtin.copy:
+        dest: "{{ patch_output_dir }}/{{ inventory_hostname }}.json"
+        mode: "0600"
+        content: "{{ {
+          'vm_name': inventory_hostname,
+          'preview_succeeded': upgrade_preview.rc == 0,
+          'preview_stdout': upgrade_preview.stdout,
+          'preview_stderr': upgrade_preview.stderr
+        } | to_nice_json }}"
+      delegate_to: localhost
+      become: false

@@ -13,3 +13,14 @@ paths:
 logging:
   log_file: logs/detect.log
   level: INFO
+
+dashboard:
+  rules_catalog: rules_catalog.json
+  reports_dir: reports
+
+vm_control:
+  api_token: change-this-demo-token
+  host_port: 5000
+  domains:
+    vm1: vm1
+    vm2: vm2

@@ -1,0 +1,87 @@
+/* ============================= */
+/* PANEL */
+/* ============================= */
+
+.panel{
+    background:#1e293b;
+    border-radius:18px;
+    padding:20px;
+    margin-top:25px;
+    box-shadow:0 10px 25px rgba(0,0,0,.3);
+    border:1px solid rgba(255,255,255,.08);
+}
+
+.panel h2{
+    color:#38bdf8;
+    margin-bottom:20px;
+}
+
+/* ============================= */
+/* TABLE */
+/* ============================= */
+
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+table thead{
+    background:#0f172a;
+}
+
+table th{
+    padding:15px;
+    text-align:left;
+    color:#38bdf8;
+    font-size:15px;
+}
+
+table td{
+    padding:15px;
+    border-bottom:1px solid rgba(255,255,255,.08);
+    color:#e2e8f0;
+}
+
+table tbody tr{
+    transition:.3s;
+}
+
+table tbody tr:hover{
+    background:#334155;
+}
+
+/* ============================= */
+/* BADGES */
+/* ============================= */
+
+.badge{
+    padding:6px 14px;
+    border-radius:30px;
+    font-size:13px;
+    font-weight:bold;
+}
+
+.pass{
+    background:#16a34a;
+    color:white;
+}
+
+.fail{
+    background:#dc2626;
+    color:white;
+}
+
+.info{
+    background:#2563eb;
+    color:white;
+}
+
+.running{
+    background:#22c55e;
+    color:white;
+}
+
+.warning{
+    background:#f59e0b;
+    color:white;
+}

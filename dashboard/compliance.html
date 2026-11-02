@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>CSPM Compliance | Advanced Private Cloud CSPM</title>
+
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/sidebar.css">
+<link rel="stylesheet" href="css/cards.css">
+<link rel="stylesheet" href="css/tables.css">
+<link rel="stylesheet" href="css/animations.css">
+<link rel="stylesheet" href="css/responsive.css">
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+<style>
+
+.page-header-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.action-btn {
+    border: none;
+    padding: 11px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    color: white;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: 0.2s ease;
+}
+
+.action-btn:hover {
+    transform: translateY(-2px);
+}
+
+.primary-btn {
+    background: #28b6f6;
+    color: #07111f;
+}
+
+.secondary-btn {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.12);
+}
+
+.compliance-card {
+    position: relative;
+    overflow: hidden;
+}
+
+.compliance-card i {
+    font-size: 27px;
+    margin-bottom: 10px;
+}
+
+.compliance-card h1 {
+    margin: 8px 0;
+}
+
+.compliance-card small {
+    opacity: 0.6;
+}
+
+.score-container {
+    display: grid;
+    grid-template-columns: 250px 1fr;
+    gap: 30px;
+    align-items: center;
+}
+
+.score-circle {
+    width: 190px;
+    height: 190px;
+    border-radius: 50%;
+    margin: auto;
+    background: conic-gradient(rgba(255,255,255,0.08) 0deg, rgba(255,255,255,0.08) 360deg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.4s ease;
+}
+
+.score-inner {
+    width: 145px;
+    height: 145px;
+    border-radius: 50%;
+    background: #111c30;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.score-inner h1 {
+    margin: 0;
+    font-size: 38px;
+}
+
+.score-inner span {
+    opacity: 0.6;
+    font-size: 13px;
+}
+
+.score-details h3 {
+    margin-top: 0;
+}
+
+.score-bar-container {
+    margin-top: 18px;
+}
+
+.score-bar-label {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 7px;
+}
+
+.score-bar {
+    height: 10px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.08);
+    overflow: hidden;
+}
+
+.score-bar-fill {
+    height: 100%;
+    width: 0%;
+    background: #20d47b;
+    border-radius: 10px;
+    transition: width 0.4s ease;
+}
+
+.compliance-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.search-container {
+    position: relative;
+    width: 340px;
+    max-width: 100%;
+}
+
+.search-container i {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 0.6;
+}
+
+.search-container input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px 15px 12px 42px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.12);
+    background: rgba(255,255,255,0.05);
+    color: white;
+    outline: none;
+}
+
+.search-container input:focus {
+    border-color: #28b6f6;
+}
+
+.filters {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.filters select {
+    padding: 11px 14px;
+    border-radius: 8px;
+    background: #111c30;
+    color: white;
+    border: 1px solid rgba(255,255,255,0.12);
+}
+
+.compliance-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.compliance-table th {
+    padding: 14px;
+    text-align: left;
+    font-size: 12px;
+    text-transform: uppercase;
+    opacity: 0.65;
+}
+
+.compliance-table td {
+    padding: 15px 14px;
+    border-top: 1px solid rgba(255,255,255,0.07);
+    vertical-align: middle;
+}
+
+.compliance-table tbody tr {
+    transition: 0.2s ease;
+}
+
+.compliance-table tbody tr:hover {
+    background: rgba(40,182,246,0.05);
+}
+
+.rule-id {
+    font-size: 11px;
+    opacity: 0.55;
+    display: block;
+    margin-top: 4px;
+}
+
+.rule-name {
+    font-weight: 700;
+}
+
+.badge {
+    padding: 6px 11px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    display: inline-block;
+}
+
+.badge.pass {
+    color: #20d47b;
+    background: rgba(32,212,123,0.13);
+}
+
+.badge.fail {
+    color: #ff5252;
+    background: rgba(255,82,82,0.13);
+}
+
+.badge.info {
+    color: #40bdf5;
+    background: rgba(64,189,245,0.13);
+}
+
+.badge.warning {
+    color: #ffb74d;
+    background: rgba(255,183,77,0.13);
+}
+
+.badge.high {
+    color: #ff5252;
+    background: rgba(255,82,82,0.10);
+}
+
+.badge.medium {
+    color: #ffb74d;
+    background: rgba(255,183,77,0.10);
+}
+
+.badge.low {
+    color: #40bdf5;
+    background: rgba(64,189,245,0.10);
+}
+
+.details-btn {
+    border: 1px solid rgba(255,255,255,0.12);
+    background: rgba(255,255,255,0.05);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.details-btn:hover {
+    border-color: #28b6f6;
+}
+
+.rule-details {
+    display: none;
+}
+
+.rule-details.show {
+    display: table-row;
+}
+
+.rule-details td {
+    background: rgba(255,255,255,0.025);
+    padding: 20px;
+}
+
+.detail-box {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+}
+
+.detail-item {
+    padding: 14px;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.04);
+}
+
+.detail-item h4 {
+    margin: 0 0 7px;
+    opacity: 0.6;
+    font-size: 12px;
+    text-transform: uppercase;
+}
+
+.detail-item p {
+    margin: 0;
+    line-height: 1.5;
+}
+
+.category-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.category-card {
+    padding: 18px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.045);
+    border: 1px solid rgba(255,255,255,0.06);
+}
+
+.category-card h3 {
+    margin: 0 0 10px;
+}
+
+.category-card p {
+    margin: 0;
+    opacity: 0.7;
+}
+
+.category-count {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.empty-state {
+    display: none;
+    text-align: center;
+    padding: 35px;
+    opacity: 0.65;
+}
+
+.empty-state i {
+    font-size: 35px;
+    margin-bottom: 10px;
+}
+
+#toast {
+    position: fixed;
+    right: 25px;
+    bottom: 25px;
+    background: #18263d;
+    color: white;
+    padding: 14px 18px;
+    border-radius: 9px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+    display: none;
+    z-index: 9999;
+}
+
+#toast.show {
+    display: block;
+    animation: toastIn 0.3s ease;
+}
+
+@keyframes toastIn {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+@media(max-width: 1000px) {
+    .score-container { grid-template-columns: 1fr; }
+    .category-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media(max-width: 700px) {
+    .category-grid { grid-template-columns: 1fr; }
+    .detail-box { grid-template-columns: 1fr; }
+    .compliance-table { min-width: 950px; }
+    .panel { overflow-x: auto; }
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<aside class="sidebar">
+<div class="logo">
+<i class="fa-solid fa-shield-halved"></i>
+<h2>CSPM</h2>
+</div>
+<ul>
+<li><a href="index.html"><i class="fa-solid fa-chart-line"></i> Dashboard</a></li>
+<li><a href="vm.html"><i class="fa-solid fa-server"></i> Virtual Machines</a></li>
+<li class="active"><a href="compliance.html"><i class="fa-solid fa-shield"></i> Compliance</a></li>
+<li><a href="security.html"><i class="fa-solid fa-lock"></i> Security</a></li>
+<li><a href="drift.html"><i class="fa-solid fa-arrows-rotate"></i> Drift Detection</a></li>
+
+<li><a href="patch.html"><i class="fa-solid fa-download"></i> Patch Management</a></li>
+<li><a href="remediation.html"><i class="fa-solid fa-screwdriver-wrench"></i> Remediation</a></li>
+<li><a href="reports.html"><i class="fa-solid fa-file-lines"></i> Reports</a></li>
+<li><a href="settings.html"><i class="fa-solid fa-gear"></i> Settings</a></li>
+</ul>
+</aside>
+
+
+<main class="content">
+
+<header class="header">
+<div>
+<h1>Compliance Monitoring</h1>
+<p>CIS-Aligned Security Benchmark Validation</p>
+</div>
+
+<div class="page-header-actions">
+<button class="action-btn secondary-btn" onclick="refreshCompliance()">
+<i class="fa-solid fa-rotate"></i> Refresh
+</button>
+<button class="action-btn primary-btn" onclick="runComplianceScan()">
+<i class="fa-solid fa-shield-halved"></i> Run Compliance Scan
+</button>
+</div>
+</header>
+
+
+<!-- SUMMARY CARDS (values filled by compliance.js) -->
+<section class="cards">
+
+<div class="card compliance-card">
+<i class="fa-solid fa-shield-halved"></i>
+<h3>Compliance Score</h3>
+<h1 id="complianceScore">—</h1>
+<small id="complianceScoreSub">Loading...</small>
+</div>
+
+<div class="card compliance-card">
+<i class="fa-solid fa-circle-check"></i>
+<h3>PASS</h3>
+<h1 id="passCount">—</h1>
+<small>Compliant controls</small>
+</div>
+
+<div class="card compliance-card">
+<i class="fa-solid fa-circle-info"></i>
+<h3>INFO</h3>
+<h1 id="infoCount">—</h1>
+<small>Controls requiring review</small>
+</div>
+
+<div class="card compliance-card">
+<i class="fa-solid fa-circle-xmark"></i>
+<h3>FAIL</h3>
+<h1 id="failCount">—</h1>
+<small>Security violations</small>
+</div>
+
+</section>
+
+
+<!-- COMPLIANCE OVERVIEW -->
+<div class="panel">
+
+<h2><i class="fa-solid fa-chart-pie"></i> Compliance Overview</h2>
+
+<div class="score-container">
+
+<div>
+<div class="score-circle">
+<div class="score-inner">
+<h1>—</h1>
+<span>Compliance</span>
+</div>
+</div>
+</div>
+
+<div class="score-details">
+<h3>CIS-Aligned Security Posture</h3>
+<p id="scoreDescription" style="opacity:0.7; line-height:1.6;">Loading real scan data...</p>
+
+<div class="score-bar-container">
+<div class="score-bar-label">
+<span>Overall Compliance</span>
+<strong id="overallComplianceLabel">—</strong>
+</div>
+<div class="score-bar">
+<div id="overallComplianceBar" class="score-bar-fill"></div>
+</div>
+</div>
+
+<div class="score-bar-container">
+<div class="score-bar-label">
+<span>Risk Score</span>
+<strong id="riskScoreLabel">—</strong>
+</div>
+<div class="score-bar">
+<div id="riskScoreBar" class="score-bar-fill" style="background:#ff5252;"></div>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+
+
+<!-- CONTROL CATEGORY SUMMARY (built dynamically) -->
+<div class="panel">
+<h2><i class="fa-solid fa-layer-group"></i> Control Categories</h2>
+<div class="category-grid" id="categoryGrid">
+<!-- filled by compliance.js -->
+</div>
+</div>
+
+
+<!-- COMPLIANCE CHECKS -->
+<div class="panel">
+
+<div class="compliance-toolbar">
+<div>
+<h2 style="margin-bottom:5px;"><i class="fa-solid fa-list-check"></i> CIS Compliance Checks</h2>
+<p id="checksSubtitle" style="opacity:0.6; margin-top:0;">Loading...</p>
+</div>
+
+<div class="filters">
+<div class="search-container">
+<i class="fa-solid fa-magnifying-glass"></i>
+<input type="text" id="searchInput" placeholder="Search security checks..." onkeyup="filterChecks()">
+</div>
+
+<select id="statusFilter" onchange="filterChecks()">
+<option value="all">All Status</option>
+<option value="PASS">PASS</option>
+<option value="FAIL">FAIL</option>
+</select>
+
+<select id="severityFilter" onchange="filterChecks()">
+<option value="all">All Severity</option>
+<option value="HIGH">HIGH</option>
+<option value="MEDIUM">MEDIUM</option>
+<option value="LOW">LOW</option>
+</select>
+</div>
+</div>
+
+<div style="overflow-x:auto;">
+<table class="compliance-table">
+<thead>
+<tr>
+<th>Rule</th>
+<th>Category</th>
+<th>Status</th>
+<th>Severity</th>
+<th>Expected</th>
+<th>Actual</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody id="complianceTable">
+<!-- rows generated live by compliance.js from /api/report -->
+</tbody>
+</table>
+
+<div id="emptyState" class="empty-state">
+<i class="fa-solid fa-magnifying-glass"></i>
+<h3>No compliance checks found</h3>
+<p>Try changing the search or filters.</p>
+</div>
+
+</div>
+</div>
+
+
+<!-- SCAN INFORMATION -->
+<div class="panel">
+<h2><i class="fa-solid fa-circle-info"></i> Scan Information</h2>
+<table class="info-table" style="width:100%; border-collapse:collapse;">
+<tr><td style="padding:12px; opacity:0.65;">Scanner</td><td style="padding:12px;">CSPM Security Scanner (detect.py + OPA)</td></tr>
+<tr><td style="padding:12px; opacity:0.65;">Framework</td><td style="padding:12px;">CIS-aligned (opa/cis.rego)</td></tr>
+<tr><td style="padding:12px; opacity:0.65;">Target</td><td style="padding:12px;">Linux (vm1, vm2)</td></tr>
+<tr><td style="padding:12px; opacity:0.65;">Total Checks</td><td style="padding:12px;" id="scanTotalChecks">—</td></tr>
+<tr><td style="padding:12px; opacity:0.65;">Compliance Score</td><td style="padding:12px;"><span class="badge warning" id="scanComplianceScore">—</span></td></tr>
+<tr><td style="padding:12px; opacity:0.65;">Risk Score</td><td style="padding:12px;"><span class="badge fail" id="scanRiskScore">—</span></td></tr>
+<tr><td style="padding:12px; opacity:0.65;">Last Scan</td><td style="padding:12px;" id="scanTimestamp">—</td></tr>
+</table>
+</div>
+
+
+</main>
+
+
+<div id="toast">
+<i class="fa-solid fa-circle-info"></i>
+<span id="toastMessage">Operation started</span>
+</div>
+
+
+<script>
+
+/* UI-only helpers that stay local to this page.
+   Data-fetching and rendering logic lives in compliance.js */
+
+function toggleDetails(id) {
+    const row = document.getElementById(id);
+
+    if (!row) {
+        console.error("Details row not found:", id);
+        return;
+    }
+
+    const isOpening = !row.classList.contains("show");
+    row.classList.toggle("show", isOpening);
+    row.style.display = isOpening ? "table-row" : "none";
+}
+
+function filterChecks() {
+    const search = document.getElementById("searchInput").value.toLowerCase();
+    const status = document.getElementById("statusFilter").value;
+    const severity = document.getElementById("severityFilter").value;
+
+    const rows = document.querySelectorAll(".rule-row");
+    let visibleCount = 0;
+
+    rows.forEach(row => {
+        const rowStatus = row.dataset.status;
+        const rowSeverity = row.dataset.severity;
+        const rowSearch = row.dataset.search;
+
+        const matchesSearch = rowSearch.includes(search);
+        const matchesStatus = status === "all" || rowStatus === status;
+        const matchesSeverity = severity === "all" || rowSeverity === severity;
+
+        if (matchesSearch && matchesStatus && matchesSeverity) {
+            row.style.display = "";
+            visibleCount++;
+        } else {
+            row.style.display = "none";
+        }
+
+        const detailRow = row.nextElementSibling;
+        if (detailRow && detailRow.classList.contains("rule-details")) {
+            detailRow.style.display = "none";
+            detailRow.classList.remove("show");
+        }
+    });
+
+    const emptyState = document.getElementById("emptyState");
+    emptyState.style.display = visibleCount === 0 ? "block" : "none";
+}
+
+</script>
+
+<script src="compliance.js"></script>
+
+</body>
+
+</html>

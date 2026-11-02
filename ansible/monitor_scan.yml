@@ -1,0 +1,64 @@
+---
+- name: Read VM security configuration for background monitoring
+  hosts: vms
+  become: true
+  tasks:
+    - name: Read effective SSH configuration
+      ansible.builtin.command: sshd -T
+      register: ssh_config
+      changed_when: false
+
+    - name: Read firewall status
+      ansible.builtin.command: ufw status
+      register: firewall
+      changed_when: false
+
+    - name: Read unattended upgrades status
+      ansible.builtin.command: systemctl is-enabled unattended-upgrades
+      register: upgrades
+      changed_when: false
+      failed_when: false
+
+    - name: Read password expiration policy
+      ansible.builtin.shell: grep -E "^PASS_MAX_DAYS" /etc/login.defs | awk '{print $2}'
+      register: password_days
+      changed_when: false
+
+    - name: Read passwd and shadow permissions
+      ansible.builtin.shell: |
+        echo "passwd:$(stat -c '%a' /etc/passwd)"
+        echo "shadow:$(stat -c '%a' /etc/shadow)"
+      register: permissions
+      changed_when: false
+
+    - name: Read suid dumpability
+      ansible.builtin.command: sysctl -n fs.suid_dumpable
+      register: suid
+      changed_when: false
+
+    - name: Build real VM security data
+      ansible.builtin.set_fact:
+        monitor_result:
+          hostname: "{{ inventory_hostname }}"
+          permit_root_login: "{{ ssh_config.stdout_lines | select('match', '^permitrootlogin') | first }}"
+          password_authentication: "{{ ssh_config.stdout_lines | select('match', '^passwordauthentication') | first }}"
+          max_auth_tries: "{{ ssh_config.stdout_lines | select('match', '^maxauthtries') | first }}"
+          x11_forwarding: "{{ ssh_config.stdout_lines | select('match', '^x11forwarding') | first }}"
+          permit_empty_passwords: "{{ ssh_config.stdout_lines | select('match', '^permitemptypasswords') | first }}"
+          ignore_rhosts: "{{ ssh_config.stdout_lines | select('match', '^ignorerhosts') | first }}"
+          client_alive_interval: "{{ ssh_config.stdout_lines | select('match', '^clientaliveinterval') | first }}"
+          ufw_status: "{{ firewall.stdout_lines[0] }}"
+          unattended_upgrades: "{{ upgrades.stdout | trim }}"
+          pass_max_days: "{{ password_days.stdout | trim }}"
+          login_grace_time: "{{ ssh_config.stdout_lines | select('match', '^logingracetime') | first }}"
+          log_level: "{{ ssh_config.stdout_lines | select('match', '^loglevel') | first }}"
+          passwd_perms: "{{ permissions.stdout_lines[0].split(':')[1] }}"
+          shadow_perms: "{{ permissions.stdout_lines[1].split(':')[1] }}"
+          suid_dumpable: "{{ suid.stdout | trim }}"
+
+    - name: Save monitoring data separately from the demo
+      ansible.builtin.copy:
+        content: "{{ monitor_result | to_nice_json }}"
+        dest: "{{ playbook_dir }}/../monitor_data/scan_results/{{ inventory_hostname }}.json"
+      delegate_to: localhost
+      become: false

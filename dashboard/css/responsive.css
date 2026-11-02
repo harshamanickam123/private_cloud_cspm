@@ -1,0 +1,92 @@
+/* ============================= */
+/* Tablet */
+/* ============================= */
+
+@media (max-width:1200px){
+
+.cards{
+    grid-template-columns:repeat(2,1fr);
+}
+
+.dashboard-grid{
+    grid-template-columns:1fr;
+}
+
+}
+
+/* ============================= */
+/* Mobile */
+/* ============================= */
+
+@media (max-width:768px){
+
+.sidebar{
+    width:80px;
+}
+
+.sidebar .logo h2{
+    display:none;
+}
+
+.sidebar ul li span{
+    display:none;
+}
+
+.content{
+    margin-left:80px;
+}
+
+.cards{
+    grid-template-columns:1fr;
+}
+
+.header{
+    flex-direction:column;
+    align-items:flex-start;
+    gap:20px;
+}
+
+.header-icons{
+    width:100%;
+    display:flex;
+    justify-content:flex-end;
+}
+
+table{
+    display:block;
+    overflow-x:auto;
+}
+
+.progress-container{
+    flex-direction:column;
+}
+
+}
+
+/* ============================= */
+/* Small Mobile */
+/* ============================= */
+
+@media (max-width:480px){
+
+.content{
+    padding:15px;
+}
+
+.header h1{
+    font-size:22px;
+}
+
+.card h1{
+    font-size:28px;
+}
+
+.card{
+    padding:20px;
+}
+
+.panel{
+    padding:15px;
+}
+
+}

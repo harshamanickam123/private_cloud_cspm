@@ -1,0 +1,60 @@
+---
+- name: Collect read-only patch status from managed VMs
+  hosts: vms
+  gather_facts: true
+  become: true
+
+  tasks:
+    - name: Read installed Debian package inventory
+      ansible.builtin.command:
+        argv:
+          - dpkg-query
+          - -W
+          - "-f=${binary:Package}\t${Version}\t${db:Status-Abbrev}\n"
+      register: installed_packages
+      changed_when: false
+
+    - name: Read pending package upgrades from existing APT cache
+      ansible.builtin.command:
+        argv:
+          - apt
+          - list
+          - --upgradable
+      register: upgradable_packages
+      changed_when: false
+      failed_when: false
+
+    - name: Check whether a reboot is required
+      ansible.builtin.stat:
+        path: /var/run/reboot-required
+      register: reboot_required_file
+
+    - name: Read standard security update count
+      ansible.builtin.command:
+        argv:
+          - /usr/lib/update-notifier/apt-check
+          - --human-readable
+      register: security_update_status
+      changed_when: false
+      failed_when: false
+
+    - name: Write structured patch status to the controller
+      ansible.builtin.copy:
+        dest: "{{ patch_output_dir }}/{{ inventory_hostname }}.json"
+        mode: "0600"
+        content: >-
+          {{
+            {
+              "vm_name": inventory_hostname,
+              "hostname": ansible_facts["hostname"],
+              "operating_system": ansible_facts["distribution"] ~ " " ~ ansible_facts["distribution_version"],
+              "ip_address": ansible_facts["default_ipv4"]["address"] | default("unknown"),
+              "installed_packages": installed_packages.stdout_lines | default([]),
+              "upgradable_packages": upgradable_packages.stdout_lines | default([]),
+              "apt_query_succeeded": upgradable_packages.rc == 0,
+              "security_update_status": (security_update_status.stdout | default("")) ~ "\n" ~ (security_update_status.stderr | default("")),
+              "reboot_required": reboot_required_file.stat.exists
+            } | to_nice_json
+          }}
+      delegate_to: localhost
+      become: false

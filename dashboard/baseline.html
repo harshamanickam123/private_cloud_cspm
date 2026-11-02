@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Security Baseline Enforcement</title>
+
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/sidebar.css">
+<link rel="stylesheet" href="css/cards.css">
+<link rel="stylesheet" href="css/tables.css">
+<link rel="stylesheet" href="css/animations.css">
+<link rel="stylesheet" href="css/responsive.css">
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+<style>
+
+.baseline-header {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:20px;
+    flex-wrap:wrap;
+}
+
+.baseline-status {
+    padding:8px 16px;
+    border-radius:20px;
+    background:rgba(34,197,94,.15);
+    color:#22c55e;
+    font-weight:bold;
+}
+
+.policy-row {
+    cursor:pointer;
+    transition:.2s;
+}
+
+.policy-row:hover {
+    background:rgba(255,255,255,.04);
+}
+
+.policy-name {
+    font-weight:bold;
+}
+
+.policy-name i {
+    margin-right:8px;
+}
+
+.status-applied {
+    color:#22c55e;
+    font-weight:bold;
+}
+
+.status-pending {
+    color:#f59e0b;
+    font-weight:bold;
+}
+
+.status-failed {
+    color:#ef4444;
+    font-weight:bold;
+}
+
+.action-buttons {
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-top:20px;
+}
+
+.action-btn {
+    border:none;
+    padding:11px 18px;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:bold;
+    transition:.2s;
+}
+
+.action-btn:hover {
+    transform:translateY(-2px);
+}
+
+.verify-btn {
+    background:#2563eb;
+    color:white;
+}
+
+.apply-btn {
+    background:#16a34a;
+    color:white;
+}
+
+.reset-btn {
+    background:#475569;
+    color:white;
+}
+
+.details-box {
+    display:none;
+    margin-top:20px;
+    padding:20px;
+    border-radius:10px;
+    background:rgba(255,255,255,.04);
+    border:1px solid rgba(255,255,255,.08);
+}
+
+.details-box.show {
+    display:block;
+}
+
+.detail-grid {
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:15px;
+    margin-top:15px;
+}
+
+.detail-item {
+    padding:15px;
+    border-radius:8px;
+    background:rgba(255,255,255,.04);
+}
+
+.detail-item strong {
+    display:block;
+    margin-bottom:6px;
+}
+
+.progress-container {
+    margin-top:20px;
+}
+
+.progress-bar {
+    width:100%;
+    height:10px;
+    background:rgba(255,255,255,.1);
+    border-radius:10px;
+    overflow:hidden;
+}
+
+.progress-fill {
+    width:100%;
+    height:100%;
+    background:#22c55e;
+    transition:width .5s;
+}
+
+.log-box {
+    max-height:180px;
+    overflow:auto;
+    padding:15px;
+    background:#080d16;
+    border-radius:8px;
+    font-family:monospace;
+    font-size:13px;
+    line-height:1.8;
+}
+
+.modal {
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.65);
+    align-items:center;
+    justify-content:center;
+    z-index:9999;
+}
+
+.modal.show {
+    display:flex;
+}
+
+.modal-content {
+    width:min(600px,90%);
+    padding:25px;
+    border-radius:12px;
+    background:#111827;
+    box-shadow:0 20px 60px rgba(0,0,0,.5);
+}
+
+.close-modal {
+    float:right;
+    cursor:pointer;
+    font-size:22px;
+}
+
+@media(max-width:800px) {
+    .detail-grid {
+        grid-template-columns:1fr;
+    }
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+
+<aside class="sidebar">
+
+<div class="logo">
+<i class="fa-solid fa-shield-halved"></i>
+<h2>CSPM</h2>
+</div>
+
+<ul>
+
+<li>
+<a href="index.html">
+<i class="fa-solid fa-chart-line"></i>
+Dashboard
+</a>
+</li>
+
+<li>
+<a href="vm.html">
+<i class="fa-solid fa-server"></i>
+Virtual Machines
+</a>
+</li>
+
+<li>
+<a href="compliance.html">
+<i class="fa-solid fa-shield"></i>
+Compliance
+</a>
+</li>
+
+<li>
+<a href="security.html">
+<i class="fa-solid fa-lock"></i>
+Security
+</a>
+</li>
+
+<li>
+<a href="drift.html">
+<i class="fa-solid fa-arrows-rotate"></i>
+Drift Detection
+</a>
+</li>
+
+<li class="active">
+<a href="baseline.html">
+<i class="fa-solid fa-layer-group"></i>
+Baseline
+</a>
+</li>
+
+<li>
+<a href="patch.html">
+<i class="fa-solid fa-download"></i>
+Patch Management
+</a>
+</li>
+
+<li>
+<a href="remediation.html">
+<i class="fa-solid fa-screwdriver-wrench"></i>
+Remediation
+</a>
+</li>
+
+<li>
+<a href="reports.html">
+<i class="fa-solid fa-file-lines"></i>
+Reports
+</a>
+</li>
+
+<li>
+<a href="settings.html">
+<i class="fa-solid fa-gear"></i>
+Settings
+</a>
+</li>
+
+</ul>
+
+</aside>
+
+
+<!-- MAIN -->
+
+<main class="content">
+
+<header class="header">
+
+<div>
+
+<h1>
+<i class="fa-solid fa-layer-group"></i>
+Security Baseline Enforcement
+</h1>
+
+<p>
+Verify and enforce secure configuration baselines
+</p>
+
+</div>
+
+<div class="baseline-status" id="overallStatus">
+<i class="fa-solid fa-circle-check"></i>
+SECURE
+</div>
+
+</header>
+
+
+<!-- SUMMARY CARDS -->
+
+<section class="cards">
+
+<div class="card">
+
+<i class="fa-solid fa-list-check"></i>
+
+<h3>Policies</h3>
+
+<h1 id="policyCount">5</h1>
+
+</div>
+
+
+<div class="card">
+
+<i class="fa-solid fa-circle-check"></i>
+
+<h3>Applied</h3>
+
+<h1 id="appliedCount">5</h1>
+
+</div>
+
+
+<div class="card">
+
+<i class="fa-solid fa-clock"></i>
+
+<h3>Pending</h3>
+
+<h1 id="pendingCount">0</h1>
+
+</div>
+
+
+<div class="card">
+
+<i class="fa-solid fa-shield-halved"></i>
+
+<h3>Baseline Score</h3>
+
+<h1 id="baselineScore">100%</h1>
+
+</div>
+
+</section>
+
+
+<!-- VM -->
+
+<div class="panel">
+
+<div class="baseline-header">
+
+<div>
+
+<h2>
+<i class="fa-solid fa-server"></i>
+Protected Virtual Machine
+</h2>
+
+<p>
+<b>VM:</b> Ubuntu-Server-01
+</p>
+
+<p>
+<b>OS:</b> Ubuntu 24.04
+</p>
+
+<p>
+<b>IP:</b> 192.168.56.101
+</p>
+
+</div>
+
+<div>
+
+<p>
+<b>Baseline:</b> Ubuntu Secure Configuration
+</p>
+
+<p>
+<b>Version:</b> v1.0
+</p>
+
+<p>
+<b>Status:</b>
+<span class="badge pass" id="vmBaselineStatus">
+ACTIVE
+</span>
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- POLICIES -->
+
+<div class="panel">
+
+<h2>
+<i class="fa-solid fa-shield"></i>
+Security Baseline Policies
+</h2>
+
+<p>
+Click a policy to view its configuration details.
+</p>
+
+<table>
+
+<thead>
+
+<tr>
+<th>Policy</th>
+<th>Expected</th>
+<th>Current</th>
+<th>Status</th>
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr class="policy-row" onclick="showPolicy('Firewall')">
+
+<td class="policy-name">
+<i class="fa-solid fa-fire"></i>
+Firewall
+</td>
+
+<td>Enabled</td>
+<td id="firewallCurrent">Enabled</td>
+
+<td>
+<span class="status-applied">
+<i class="fa-solid fa-circle-check"></i>
+Applied
+</span>
+</td>
+
+</tr>
+
+
+<tr class="policy-row" onclick="showPolicy('SSH Root Login')">
+
+<td class="policy-name">
+<i class="fa-solid fa-user-shield"></i>
+SSH Root Login
+</td>
+
+<td>Restricted</td>
+<td id="sshRootCurrent">Restricted</td>
+
+<td>
+<span class="status-applied">
+<i class="fa-solid fa-circle-check"></i>
+Applied
+</span>
+</td>
+
+</tr>
+
+
+<tr class="policy-row" onclick="showPolicy('Password Authentication')">
+
+<td class="policy-name">
+<i class="fa-solid fa-key"></i>
+Password Authentication
+</td>
+
+<td>Controlled</td>
+<td id="passwordCurrent">Controlled</td>
+
+<td>
+<span class="status-applied">
+<i class="fa-solid fa-circle-check"></i>
+Applied
+</span>
+</td>
+
+</tr>
+
+
+<tr class="policy-row" onclick="showPolicy('SSH Service')">
+
+<td class="policy-name">
+<i class="fa-solid fa-terminal"></i>
+SSH Service
+</td>
+
+<td>Running</td>
+<td id="sshServiceCurrent">Running</td>
+
+<td>
+<span class="status-applied">
+<i class="fa-solid fa-circle-check"></i>
+Applied
+</span>
+</td>
+
+</tr>
+
+
+<tr class="policy-row" onclick="showPolicy('SSH Port')">
+
+<td class="policy-name">
+<i class="fa-solid fa-network-wired"></i>
+SSH Port
+</td>
+
+<td>22</td>
+<td id="sshPortCurrent">22</td>
+
+<td>
+<span class="status-applied">
+<i class="fa-solid fa-circle-check"></i>
+Applied
+</span>
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+
+<!-- POLICY DETAILS -->
+
+<div class="details-box" id="policyDetails">
+
+<h3 id="detailTitle">
+Policy Details
+</h3>
+
+<div class="detail-grid">
+
+<div class="detail-item">
+
+<strong>Expected Configuration</strong>
+
+<span id="detailExpected">-</span>
+
+</div>
+
+<div class="detail-item">
+
+<strong>Current Configuration</strong>
+
+<span id="detailCurrent">-</span>
+
+</div>
+
+<div class="detail-item">
+
+<strong>Security Status</strong>
+
+<span id="detailStatus">-</span>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- SUMMARY -->
+
+<div class="panel">
+
+<h2>
+<i class="fa-solid fa-clipboard-check"></i>
+Baseline Verification
+</h2>
+
+<div class="progress-container">
+
+<p>
+Baseline enforcement progress
+</p>
+
+<div class="progress-bar">
+
+<div
+class="progress-fill"
+id="progressFill">
+</div>
+
+</div>
+
+<p id="progressText">
+5 of 5 policies applied
+</p>
+
+</div>
+
+<div class="action-buttons">
+
+<button
+class="action-btn verify-btn"
+onclick="verifyBaseline()">
+
+<i class="fa-solid fa-magnifying-glass"></i>
+Verify Baseline
+
+</button>
+
+
+<button
+class="action-btn apply-btn"
+onclick="applyBaseline()">
+
+<i class="fa-solid fa-check-double"></i>
+Apply Baseline
+
+</button>
+
+
+<button
+class="action-btn reset-btn"
+onclick="clearLog()">
+
+<i class="fa-solid fa-rotate-left"></i>
+Clear Log
+
+</button>
+
+</div>
+
+</div>
+
+
+<!-- EXECUTION LOG -->
+
+<div class="panel">
+
+<h2>
+<i class="fa-solid fa-terminal"></i>
+Baseline Activity Log
+</h2>
+
+<div class="log-box" id="activityLog">
+
+[READY] CSPM baseline engine initialized.<br>
+
+[INFO] Ubuntu-Server-01 detected.<br>
+
+[INFO] Baseline version v1.0 loaded.<br>
+
+[PASS] All security policies currently applied.
+
+</div>
+
+</div>
+
+
+<!-- BASELINE INFORMATION -->
+
+<div class="panel">
+
+<h2>
+<i class="fa-solid fa-circle-info"></i>
+Baseline Information
+</h2>
+
+<div class="detail-grid">
+
+<div class="detail-item">
+
+<strong>Baseline Name</strong>
+
+Ubuntu Secure Configuration Baseline
+
+</div>
+
+<div class="detail-item">
+
+<strong>Version</strong>
+
+v1.0
+
+</div>
+
+<div class="detail-item">
+
+<strong>Framework</strong>
+
+CIS Security Principles
+
+</div>
+
+<div class="detail-item">
+
+<strong>Protected VM</strong>
+
+Ubuntu-Server-01
+
+</div>
+
+<div class="detail-item">
+
+<strong>Last Verified</strong>
+
+<span id="lastVerified">
+Not verified yet
+</span>
+
+</div>
+
+<div class="detail-item">
+
+<strong>Drift Status</strong>
+
+<span id="driftStatus">
+None Detected
+</span>
+
+</div>
+
+</div>
+
+</div>
+
+</main>
+
+
+<!-- POLICY MODAL -->
+
+<div class="modal" id="policyModal">
+
+<div class="modal-content">
+
+<span
+class="close-modal"
+onclick="closeModal()">
+&times;
+</span>
+
+<h2 id="modalTitle">
+Policy
+</h2>
+
+<p id="modalDescription">
+Policy details
+</p>
+
+<button
+class="action-btn verify-btn"
+onclick="closeModal()">
+
+Close
+
+</button>
+
+</div>
+
+</div>
+
+
+<script>
+
+const policies = {
+
+"Firewall": {
+expected:"Enabled",
+current:"Enabled",
+description:"The host firewall must remain enabled to protect the virtual machine from unauthorized network access."
+},
+
+"SSH Root Login": {
+expected:"Restricted",
+current:"Restricted",
+description:"Direct SSH root access is restricted according to the approved security baseline."
+},
+
+"Password Authentication": {
+expected:"Controlled",
+current:"Controlled",
+description:"SSH password authentication must follow the approved security configuration."
+},
+
+"SSH Service": {
+expected:"Running",
+current:"Running",
+description:"The SSH service is monitored and must remain available for approved administration."
+},
+
+"SSH Port": {
+expected:"22",
+current:"22",
+description:"SSH is configured to use the approved port 22."
+}
+
+};
+
+
+function showPolicy(name) {
+
+const policy = policies[name];
+
+document.getElementById("detailTitle").innerText =
+name + " Details";
+
+document.getElementById("detailExpected").innerText =
+policy.expected;
+
+document.getElementById("detailCurrent").innerText =
+policy.current;
+
+document.getElementById("detailStatus").innerHTML =
+'<span class="status-applied">APPLIED</span>';
+
+document.getElementById("policyDetails")
+.classList.add("show");
+
+document.getElementById("modalTitle").innerText =
+name;
+
+document.getElementById("modalDescription").innerText =
+policy.description;
+
+document.getElementById("policyModal")
+.classList.add("show");
+
+}
+
+
+function closeModal() {
+
+document.getElementById("policyModal")
+.classList.remove("show");
+
+}
+
+
+function addLog(message) {
+
+const log =
+document.getElementById("activityLog");
+
+const time =
+new Date().toLocaleTimeString();
+
+log.innerHTML +=
+"<br>[" + time + "] " + message;
+
+log.scrollTop = log.scrollHeight;
+
+}
+
+
+function verifyBaseline() {
+
+addLog("INFO: Starting baseline verification...");
+
+const progress =
+document.getElementById("progressFill");
+
+progress.style.width = "20%";
+
+setTimeout(() => {
+
+addLog("CHECK: Firewall configuration verified.");
+progress.style.width = "40%";
+
+},500);
+
+setTimeout(() => {
+
+addLog("CHECK: SSH root login configuration verified.");
+progress.style.width = "60%";
+
+},1000);
+
+setTimeout(() => {
+
+addLog("CHECK: Password authentication verified.");
+progress.style.width = "80%";
+
+},1500);
+
+setTimeout(() => {
+
+addLog("CHECK: SSH service and port verified.");
+progress.style.width = "100%";
+
+document.getElementById("lastVerified")
+.innerText =
+new Date().toLocaleString();
+
+document.getElementById("driftStatus")
+.innerText =
+"None Detected";
+
+addLog("PASS: Baseline verification completed.");
+
+document.getElementById("overallStatus")
+.innerHTML =
+'<i class="fa-solid fa-circle-check"></i> SECURE';
+
+},2000);
+
+}
+
+
+function applyBaseline() {
+
+addLog("INFO: Applying approved security baseline...");
+
+document.getElementById("progressFill")
+.style.width = "20%";
+
+setTimeout(() => {
+
+addLog("APPLY: Firewall policy enforced.");
+document.getElementById("progressFill")
+.style.width = "40%";
+
+},500);
+
+setTimeout(() => {
+
+addLog("APPLY: SSH root login restriction enforced.");
+document.getElementById("progressFill")
+.style.width = "60%";
+
+},1000);
+
+setTimeout(() => {
+
+addLog("APPLY: Password authentication policy enforced.");
+document.getElementById("progressFill")
+.style.width = "80%";
+
+},1500);
+
+setTimeout(() => {
+
+addLog("APPLY: SSH service and port policy verified.");
+document.getElementById("progressFill")
+.style.width = "100%";
+
+document.getElementById("appliedCount")
+.innerText = "5";
+
+document.getElementById("pendingCount")
+.innerText = "0";
+
+document.getElementById("baselineScore")
+.innerText = "100%";
+
+document.getElementById("progressText")
+.innerText =
+"5 of 5 policies applied";
+
+document.getElementById("lastVerified")
+.innerText =
+new Date().toLocaleString();
+
+addLog("SUCCESS: Security baseline successfully applied.");
+
+document.getElementById("overallStatus")
+.innerHTML =
+'<i class="fa-solid fa-circle-check"></i> SECURE';
+
+},2000);
+
+}
+
+
+function clearLog() {
+
+document.getElementById("activityLog").innerHTML =
+"[READY] Activity log cleared.<br>[INFO] CSPM baseline engine ready.";
+
+}
+
+
+window.onclick = function(event) {
+
+const modal =
+document.getElementById("policyModal");
+
+if(event.target === modal) {
+
+closeModal();
+
+}
+
+};
+
+</script>
+
+</body>
+</html>

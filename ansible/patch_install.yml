@@ -1,0 +1,31 @@
+---
+- name: Install standard package upgrades on selected VMs
+  hosts: vms
+  gather_facts: false
+  become: true
+  tasks:
+    - name: Refresh APT metadata and install standard upgrades
+      ansible.builtin.apt:
+        update_cache: true
+        upgrade: yes
+        autoremove: false
+        autoclean: false
+      register: patch_install_result
+
+    - name: Check whether reboot is required
+      ansible.builtin.stat:
+        path: /var/run/reboot-required
+      register: reboot_marker
+
+    - name: Save installation result on controller
+      ansible.builtin.copy:
+        dest: "{{ patch_output_dir }}/{{ inventory_hostname }}.json"
+        mode: "0600"
+        content: "{{ {
+          'vm_name': inventory_hostname,
+          'install_changed': patch_install_result.changed | default(false),
+          'reboot_required': reboot_marker.stat.exists | default(false),
+          'install_succeeded': true
+        } | to_nice_json }}"
+      delegate_to: localhost
+      become: false

@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>CSPM | Compliance Reports</title>
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/sidebar.css">
+    <link rel="stylesheet" href="css/cards.css">
+    <link rel="stylesheet" href="css/tables.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="css/responsive.css">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+    <style>
+
+        .report-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .report-btn {
+            border: none;
+            padding: 12px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            color: white;
+            transition: 0.2s;
+        }
+
+        .report-btn:hover {
+            transform: translateY(-2px);
+            opacity: 0.9;
+        }
+
+        .btn-view {
+            background: #2563eb;
+        }
+
+        .btn-json {
+            background: #16a34a;
+        }
+
+        .btn-pdf {
+            background: #dc2626;
+        }
+
+        .btn-pdf-view {
+            background: #7c3aed;
+        }
+
+        .status-box {
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .status-success {
+            border-left: 4px solid #22c55e;
+        }
+
+        .status-error {
+            border-left: 4px solid #ef4444;
+        }
+
+        .status-info {
+            border-left: 4px solid #3b82f6;
+        }
+
+        #scannerResults {
+            display: none;
+            margin-top: 20px;
+        }
+
+        #scannerResults.show {
+            display: block;
+        }
+
+        .json-viewer {
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 10px;
+            overflow-x: auto;
+            max-height: 600px;
+            white-space: pre-wrap;
+            word-break: break-word;
+            font-family: monospace;
+            font-size: 13px;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .summary-box {
+            padding: 18px;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .summary-box h4 {
+            margin-bottom: 8px;
+        }
+
+        .summary-box p {
+            font-size: 24px;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .pass-value {
+            color: #22c55e;
+        }
+
+        .fail-value {
+            color: #ef4444;
+        }
+
+        .info-value {
+            color: #f59e0b;
+        }
+
+        .score-value {
+            color: #3b82f6;
+        }
+
+        .toast-container {
+            position: fixed;
+            right: 25px;
+            bottom: 25px;
+            z-index: 9999;
+        }
+
+        .toast {
+            min-width: 280px;
+            padding: 15px 18px;
+            margin-top: 10px;
+            border-radius: 9px;
+            background: #1f2937;
+            color: white;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .toast.success {
+            border-left: 4px solid #22c55e;
+        }
+
+        .toast.error {
+            border-left: 4px solid #ef4444;
+        }
+
+        .toast.info {
+            border-left: 4px solid #3b82f6;
+        }
+
+        @media (max-width: 900px) {
+
+            .summary-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+        }
+
+        @media (max-width: 600px) {
+
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- ================= SIDEBAR ================= -->
+
+<aside class="sidebar">
+
+    <div class="logo">
+
+        <i class="fa-solid fa-shield-halved"></i>
+
+        <h2>CSPM</h2>
+
+    </div>
+
+
+    <ul>
+
+        <li>
+            <a href="index.html">
+                <i class="fa-solid fa-chart-line"></i>
+                Dashboard
+            </a>
+        </li>
+
+        <li>
+            <a href="vm.html">
+                <i class="fa-solid fa-server"></i>
+                Virtual Machines
+            </a>
+        </li>
+
+        <li>
+            <a href="compliance.html">
+                <i class="fa-solid fa-shield"></i>
+                Compliance
+            </a>
+        </li>
+
+        <li>
+            <a href="security.html">
+                <i class="fa-solid fa-lock"></i>
+                Security
+            </a>
+        </li>
+
+        <li>
+            <a href="drift.html">
+                <i class="fa-solid fa-arrows-rotate"></i>
+                Drift Detection
+            </a>
+        </li>
+
+        
+
+        <li>
+            <a href="patch.html">
+                <i class="fa-solid fa-download"></i>
+                Patch Management
+            </a>
+        </li>
+
+        <li>
+            <a href="remediation.html">
+                <i class="fa-solid fa-screwdriver-wrench"></i>
+                Remediation
+            </a>
+        </li>
+
+        <li class="active">
+            <a href="reports.html">
+                <i class="fa-solid fa-file-lines"></i>
+                Reports
+            </a>
+        </li>
+
+        <li>
+            <a href="settings.html">
+                <i class="fa-solid fa-gear"></i>
+                Settings
+            </a>
+        </li>
+
+    </ul>
+
+</aside>
+
+
+<!-- ================= MAIN CONTENT ================= -->
+
+<main class="content">
+
+
+    <!-- HEADER -->
+
+    <header class="header">
+
+        <div>
+
+            <h1>
+                Compliance Reports
+            </h1>
+
+            <p>
+                Security Compliance & Audit Reports
+            </p>
+
+        </div>
+
+    </header>
+
+
+    <!-- ================= SUMMARY CARDS ================= -->
+
+    <section class="cards">
+
+
+        <div class="card">
+
+            <i class="fa-solid fa-file-pdf"></i>
+
+            <h3>
+                PDF Reports
+            </h3>
+
+            <h1 id="pdfCount">
+                0
+            </h1>
+
+            <p>
+                Generated reports
+            </p>
+
+        </div>
+
+
+        <div class="card">
+
+            <i class="fa-solid fa-file-code"></i>
+
+            <h3>
+                JSON Reports
+            </h3>
+
+            <h1 id="jsonCount">
+                1
+            </h1>
+
+            <p>
+                Machine-readable results
+            </p>
+
+        </div>
+
+
+        <div class="card">
+
+            <i class="fa-solid fa-shield-halved"></i>
+
+            <h3>
+                Compliance Score
+            </h3>
+
+            <h1 id="complianceScore">
+                --
+            </h1>
+
+            <p>
+                CIS-aligned checks
+            </p>
+
+        </div>
+
+
+        <div class="card">
+
+            <i class="fa-solid fa-triangle-exclamation"></i>
+
+            <h3>
+                Risk Score
+            </h3>
+
+            <h1 id="riskScore">
+                --
+            </h1>
+
+            <p>
+                Current security risk
+            </p>
+
+        </div>
+
+
+    </section>
+
+
+    <!-- ================= REPORT INFORMATION ================= -->
+
+    <div class="panel">
+
+        <h2>
+
+            <i class="fa-solid fa-circle-info"></i>
+
+            Report Information
+
+        </h2>
+
+
+        <table>
+
+            <tbody>
+
+                <tr>
+                    <td><strong>Scanner</strong></td>
+                    <td id="scannerName">Loading...</td>
+                </tr>
+
+                <tr>
+                    <td><strong>Version</strong></td>
+                    <td id="scannerVersion">Loading...</td>
+                </tr>
+
+                <tr>
+                    <td><strong>Framework</strong></td>
+                    <td id="framework">Loading...</td>
+                </tr>
+<tr>
+    <td><strong>Target</strong></td>
+    <td id="reportTarget">Loading...</td>
+</tr>
+    <tr>
+    <td><strong>Controller</strong></td>
+    <td id="controllerOS">Loading...</td>
+</tr>
+            </tbody>
+
+        </table>
+
+    </div>
+
+
+    <!-- ================= SECURITY ASSESSMENT ================= -->
+
+    <div class="panel">
+
+        <h2>
+
+            <i class="fa-solid fa-chart-pie"></i>
+
+            Security Assessment Summary
+
+        </h2>
+
+
+        <div class="summary-grid">
+
+
+            <div class="summary-box">
+
+                <h4>
+                    Total Checks
+                </h4>
+
+                <p id="totalChecks">
+                    --
+                </p>
+
+            </div>
+
+
+            <div class="summary-box">
+
+                <h4>
+                    Passed
+                </h4>
+
+                <p id="passedChecks"
+                   class="pass-value">
+                    --
+                </p>
+
+            </div>
+
+
+            <div class="summary-box">
+
+                <h4>
+                    Failed
+                </h4>
+
+                <p id="failedChecks"
+                   class="fail-value">
+                    --
+                </p>
+
+            </div>
+
+
+            <div class="summary-box">
+
+                <h4>
+                    Information
+                </h4>
+
+                <p id="infoChecks"
+                   class="info-value">
+                    --
+                </p>
+
+            </div>
+
+
+        </div>
+
+
+        <div class="summary-grid">
+
+
+            <div class="summary-box">
+
+                <h4>
+                    Compliance
+                </h4>
+
+                <p id="summaryCompliance"
+                   class="score-value">
+                    --
+                </p>
+
+            </div>
+
+
+            <div class="summary-box">
+
+                <h4>
+                    Risk
+                </h4>
+
+                <p id="summaryRisk"
+                   class="fail-value">
+                    --
+                </p>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+
+    <!-- ================= GENERATED REPORTS ================= -->
+
+    <div class="panel">
+
+        <h2>
+
+            <i class="fa-solid fa-folder-open"></i>
+
+            Generated Reports
+
+        </h2>
+
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Report
+                    </th>
+
+                    <th>
+                        Format
+                    </th>
+
+                    <th>
+                        Date
+                    </th>
+
+                    <th>
+                        Status
+                    </th>
+
+                    <th>
+                        Action
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+
+                <tr>
+
+                    <td>
+                        Compliance Report
+                    </td>
+
+                    <td>
+                        PDF
+                    </td>
+
+                    <td id="pdfDate">
+                        Not generated
+                    </td>
+
+                    <td>
+
+                        <span id="pdfStatus"
+                              class="badge info">
+
+                            Not Generated
+
+                        </span>
+
+                    </td>
+
+                    <td>
+
+                        <div class="report-actions">
+
+                            <button
+                                class="report-btn btn-pdf"
+                                onclick="generatePDF()">
+
+                                <i class="fa-solid fa-file-pdf"></i>
+
+                                Generate PDF
+
+                            </button>
+
+
+                            <button
+                                id="viewPdfBtn"
+                                class="report-btn btn-pdf-view"
+                                onclick="viewPDF()"
+                                disabled>
+
+                                <i class="fa-solid fa-eye"></i>
+
+                                View PDF
+
+                            </button>
+
+                        </div>
+
+                    </td>
+
+                </tr>
+
+
+                <tr>
+
+                    <td>
+                        Scanner Report
+                    </td>
+
+                    <td>
+                        JSON
+                    </td>
+<td id="jsonDate">Loading...</td>
+
+                    <td>
+<span id="jsonStatus" class="badge info">
+    Checking...
+</span>
+
+                    </td>
+
+                    <td>
+
+                        <div class="report-actions">
+
+                            <button
+                                class="report-btn btn-view"
+                                onclick="viewScannerResults()">
+
+                                <i class="fa-solid fa-eye"></i>
+
+                                View Scanner Results
+
+                            </button>
+
+
+                            <button
+                                class="report-btn btn-json"
+                                onclick="downloadJSON()">
+
+                                <i class="fa-solid fa-download"></i>
+
+                                Download JSON
+
+                            </button>
+
+                        </div>
+
+                    </td>
+
+                </tr>
+
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+
+    <!-- ================= SCANNER RESULTS ================= -->
+
+    <div class="panel"
+         id="scannerResults">
+
+        <h2>
+
+            <i class="fa-solid fa-code"></i>
+
+            Scanner Results
+
+        </h2>
+
+
+        <div id="resultsStatus"
+             class="status-box status-info">
+
+            Loading scanner report...
+
+        </div>
+
+
+        <pre id="jsonViewer"
+             class="json-viewer"></pre>
+
+    </div>
+
+
+    <!-- ================= LATEST SCAN ================= -->
+
+    <div class="panel">
+
+        <h2>
+
+            <i class="fa-solid fa-clock-rotate-left"></i>
+
+            Latest Scan
+
+        </h2>
+
+
+        <div class="status-box status-success">
+
+            <h3>
+
+                <i class="fa-solid fa-circle-check"></i>
+
+                Scan Completed Successfully
+
+            </h3>
+
+            <br>
+
+            <p>
+                <strong>Scanner:</strong>
+                CSPM Security Scanner
+            </p>
+
+            <p>
+                <strong>Controller:</strong>
+                Kali Linux
+            </p>
+
+            <p>
+                <strong>Target:</strong>
+                Ubuntu Virtual Machine
+            </p>
+
+            <p>
+                <strong>Framework:</strong>
+                CIS
+            </p>
+
+            <p>
+                <strong>Report Source:</strong>
+                reports/report.json
+            </p>
+
+        </div>
+
+    </div>
+
+
+</main>
+
+
+<!-- ================= TOAST ================= -->
+
+<div id="toastContainer"
+     class="toast-container">
+</div>
+
+
+<!-- ================= JS ================= -->
+
+<script src="js/report.js"></script>
+
+
+</body>
+
+</html>

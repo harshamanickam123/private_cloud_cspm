@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Advanced Private Cloud CSPM</title>
+
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/sidebar.css">
+<link rel="stylesheet" href="css/cards.css">
+<link rel="stylesheet" href="css/tables.css">
+<link rel="stylesheet" href="css/animations.css">
+<link rel="stylesheet" href="css/responsive.css">
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+
+/* =========================================
+   CLICKABLE DASHBOARD CARDS
+========================================= */
+
+.dashboard-card-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+.dashboard-card-link .card {
+    cursor: pointer;
+    transition: transform 0.2s ease,
+                box-shadow 0.2s ease;
+}
+
+.dashboard-card-link .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.30);
+}
+
+/* =========================================
+   CARD VALUE
+========================================= */
+
+.card h1 {
+    margin-top: 10px;
+}
+
+/* =========================================
+   CARD ACTION TEXT
+========================================= */
+
+.card-action {
+    margin-top: 8px;
+    font-size: 13px;
+    opacity: 0.7;
+}
+
+/* =========================================
+   SCANNER STATUS
+========================================= */
+
+#scanStatus {
+    margin-top: 15px;
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================
+     SIDEBAR
+========================================= -->
+
+<aside class="sidebar">
+
+    <div class="logo">
+
+        <i class="fa-solid fa-shield-halved"></i>
+
+        <h2>CSPM</h2>
+
+    </div>
+
+
+    <ul>
+
+        <li class="active">
+            <a href="index.html">
+                <i class="fa-solid fa-chart-line"></i>
+                <span>Dashboard</span>
+            </a>
+        </li>
+
+
+        <li>
+            <a href="vm.html">
+                <i class="fa-solid fa-server"></i>
+                <span>Virtual Machines</span>
+            </a>
+        </li>
+
+
+        <li>
+            <a href="compliance.html">
+                <i class="fa-solid fa-shield"></i>
+                <span>Compliance</span>
+            </a>
+        </li>
+
+
+        <li>
+            <a href="security.html">
+                <i class="fa-solid fa-bug"></i>
+                <span>Security</span>
+            </a>
+        </li>
+
+
+        <li>
+            <a href="drift.html">
+                <i class="fa-solid fa-arrow-right-arrow-left"></i>
+                <span>Drift Detection</span>
+            </a>
+        </li>
+
+
+        
+
+
+        <li>
+            <a href="patch.html">
+                <i class="fa-solid fa-download"></i>
+                <span>Patch</span>
+            </a>
+        </li>
+
+
+        <li>
+            <a href="remediation.html">
+                <i class="fa-solid fa-screwdriver-wrench"></i>
+                <span>Remediation</span>
+            </a>
+        </li>
+
+
+        <li>
+            <a href="reports.html">
+                <i class="fa-solid fa-file-lines"></i>
+                <span>Reports</span>
+            </a>
+        </li>
+
+
+        <li>
+            <a href="settings.html">
+                <i class="fa-solid fa-gear"></i>
+                <span>Settings</span>
+            </a>
+        </li>
+
+    </ul>
+
+</aside>
+
+
+
+<!-- =========================================
+     MAIN CONTENT
+========================================= -->
+
+<main class="content">
+
+
+<!-- =========================================
+     HEADER
+========================================= -->
+
+<header class="header">
+
+    <div>
+
+        <h1>
+            Advanced Private Cloud CSPM
+        </h1>
+
+        <p>
+            Security Monitoring Dashboard
+        </p>
+
+        <p id="scanTime">
+            Last Scan: Loading...
+        </p>
+
+    </div>
+
+
+    <div class="header-icons">
+
+        <i class="fa-solid fa-magnifying-glass"></i>
+
+        <i class="fa-solid fa-bell"></i>
+
+        <i class="fa-solid fa-user"></i>
+
+    </div>
+
+</header>
+
+
+
+<!-- =========================================
+     DASHBOARD SUMMARY CARDS
+========================================= -->
+
+<section class="cards">
+
+
+<!-- TOTAL VMS -->
+
+<a href="vm.html"
+   class="dashboard-card-link">
+
+    <div class="card">
+
+        <i class="fa-solid fa-server"></i>
+
+        <h3>
+            Total VMs
+        </h3>
+
+        <h1 id="vmCount">
+            --
+        </h1>
+
+        <p class="card-action">
+            View VM Details →
+        </p>
+
+    </div>
+
+</a>
+
+
+
+<!-- COMPLIANCE -->
+
+<a href="compliance.html"
+   class="dashboard-card-link">
+
+    <div class="card">
+
+        <i class="fa-solid fa-shield"></i>
+
+        <h3>
+            Compliance
+        </h3>
+
+        <h1 id="compliance">
+            --
+        </h1>
+
+        <p class="card-action">
+            View Compliance →
+        </p>
+
+    </div>
+
+</a>
+
+
+
+<!-- RISK -->
+
+<a href="security.html"
+   class="dashboard-card-link">
+
+    <div class="card">
+
+        <i class="fa-solid fa-triangle-exclamation"></i>
+
+        <h3>
+            Risk Score
+        </h3>
+
+        <h1 id="risk">
+            --
+        </h1>
+
+        <p class="card-action">
+            View Security Risk →
+        </p>
+
+    </div>
+
+</a>
+
+
+
+<!-- ALERTS -->
+
+<a href="security.html"
+   class="dashboard-card-link">
+
+    <div class="card">
+
+        <i class="fa-solid fa-fire"></i>
+
+        <h3>
+            Active Alerts
+        </h3>
+
+        <h1 id="alerts">
+            --
+        </h1>
+
+        <p class="card-action">
+            View Security Alerts →
+        </p>
+
+    </div>
+
+</a>
+
+
+</section>
+
+
+
+<!-- =========================================
+     QUICK ACCESS
+========================================= -->
+
+<section class="panel">
+
+    <h2>
+
+        <i class="fa-solid fa-bolt"></i>
+
+        Quick Access
+
+    </h2>
+
+
+    <div class="cards">
+
+
+        <a href="vm.html"
+           class="dashboard-card-link">
+
+            <div class="card">
+
+                <i class="fa-solid fa-server"></i>
+
+                <h3>
+                    VM Inventory
+                </h3>
+
+                <p>
+                    View monitored Ubuntu VMs
+                </p>
+
+            </div>
+
+        </a>
+
+
+        <a href="drift.html"
+           class="dashboard-card-link">
+
+            <div class="card">
+
+                <i class="fa-solid fa-arrows-rotate"></i>
+
+                <h3>
+                    Drift Detection
+                </h3>
+
+                <p>
+                    Compare VM configuration
+                    with baseline
+                </p>
+
+            </div>
+
+        </a>
+
+
+        <a href="remediation.html"
+           class="dashboard-card-link">
+
+            <div class="card">
+
+                <i class="fa-solid fa-screwdriver-wrench"></i>
+
+                <h3>
+                    Remediation
+                </h3>
+
+                <p>
+                    Review security remediation
+                </p>
+
+            </div>
+
+        </a>
+
+
+        <a href="reports.html"
+           class="dashboard-card-link">
+
+            <div class="card">
+
+                <i class="fa-solid fa-file-lines"></i>
+
+                <h3>
+                    Reports
+                </h3>
+
+                <p>
+                    View generated CSPM reports
+                </p>
+
+            </div>
+
+        </a>
+
+
+    </div>
+
+</section>
+
+
+
+</main>
+
+
+
+<!-- =========================================
+     JAVASCRIPT
+========================================= -->
+
+<script src="js/api.js"></script>
+
+<script src="js/live.js"></script>
+
+<script src="js/scanner.js"></script>
+
+
+</body>
+
+</html>

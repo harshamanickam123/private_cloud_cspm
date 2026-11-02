@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Auto Remediation | Advanced Private Cloud CSPM</title>
+
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/sidebar.css">
+<link rel="stylesheet" href="css/cards.css">
+<link rel="stylesheet" href="css/tables.css">
+<link rel="stylesheet" href="css/animations.css">
+<link rel="stylesheet" href="css/responsive.css">
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+<style>
+
+/* =========================
+   REMEDIATION PAGE
+========================= */
+
+.page-intro {
+    margin-bottom: 25px;
+}
+
+.page-intro h1 {
+    margin-bottom: 8px;
+}
+
+.page-intro p {
+    opacity: 0.75;
+}
+
+
+/* =========================
+   STATUS CARDS
+========================= */
+
+.remediation-cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+    margin-bottom: 25px;
+}
+
+.rem-card {
+    padding: 22px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+    transition: 0.25s;
+}
+
+.rem-card:hover {
+    transform: translateY(-3px);
+    background: rgba(255,255,255,0.08);
+}
+
+.rem-card i {
+    font-size: 24px;
+    margin-bottom: 12px;
+}
+
+.rem-card h4 {
+    margin: 0 0 8px;
+    opacity: 0.7;
+}
+
+.rem-card h2 {
+    margin: 0;
+}
+
+
+/* =========================
+   INFORMATION BOX
+========================= */
+
+.approval-box {
+    padding: 20px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.04);
+    border-left: 4px solid #2ecc71;
+    margin-top: 15px;
+}
+
+.approval-box strong {
+    display: block;
+    margin-bottom: 7px;
+}
+
+
+/* =========================
+   ACTION BUTTONS
+========================= */
+
+.action-buttons {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 15px;
+}
+
+.rem-btn {
+    padding: 10px 17px;
+    border: none;
+    border-radius: 7px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.2s;
+}
+
+.rem-btn:hover {
+    transform: translateY(-1px);
+}
+
+.rem-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.btn-approve {
+    background: #2ecc71;
+    color: white;
+}
+
+
+/* =========================
+   FINDINGS
+========================= */
+
+.vm-finding-section {
+    margin-bottom: 25px;
+    padding: 18px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.025);
+    border: 1px solid rgba(255,255,255,0.07);
+}
+
+.vm-finding-section h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    flex-wrap: wrap;
+}
+
+.finding-list {
+    width: 100%;
+}
+
+.issue-row {
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    gap: 10px;
+
+    padding: 11px 0;
+
+    border-bottom:
+        1px solid rgba(255,255,255,0.07);
+}
+
+.issue-row:last-child {
+    border-bottom: none;
+}
+
+.issue-row strong {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.issue-row span {
+    opacity: 0.9;
+    line-height: 1.5;
+}
+
+
+/* =========================
+   REMEDIATION RESULT
+========================= */
+
+#remediationResult .approval-box {
+    border-left-color: #2ecc71;
+}
+
+#remediationResult p {
+    margin: 8px 0;
+}
+
+
+/* =========================
+   STATUS BADGES
+========================= */
+
+.badge {
+    display: inline-block;
+    padding: 4px 9px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.badge.info {
+    background: rgba(52,152,219,0.15);
+    color: #3498db;
+}
+
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 1000px) {
+
+    .remediation-cards {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+}
+
+@media (max-width: 600px) {
+
+    .remediation-cards {
+        grid-template-columns: 1fr;
+    }
+
+    .issue-row {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================
+     SIDEBAR
+========================= -->
+
+<aside class="sidebar">
+
+<div class="logo">
+
+<i class="fa-solid fa-shield-halved"></i>
+
+<h2>CSPM</h2>
+
+</div>
+
+
+<ul>
+
+<li>
+<a href="index.html">
+<i class="fa-solid fa-chart-line"></i>
+Dashboard
+</a>
+</li>
+
+
+<li>
+<a href="vm.html">
+<i class="fa-solid fa-server"></i>
+Virtual Machines
+</a>
+</li>
+
+
+<li>
+<a href="compliance.html">
+<i class="fa-solid fa-shield"></i>
+Compliance
+</a>
+</li>
+
+
+<li>
+<a href="security.html">
+<i class="fa-solid fa-lock"></i>
+Security
+</a>
+</li>
+
+
+<li>
+<a href="drift.html">
+<i class="fa-solid fa-arrows-rotate"></i>
+Drift Detection
+</a>
+</li>
+
+
+
+
+
+<li>
+<a href="patch.html">
+<i class="fa-solid fa-download"></i>
+Patch Management
+</a>
+</li>
+
+
+<li class="active">
+<a href="remediation.html">
+<i class="fa-solid fa-screwdriver-wrench"></i>
+Remediation
+</a>
+</li>
+
+
+<li>
+<a href="reports.html">
+<i class="fa-solid fa-file-lines"></i>
+Reports
+</a>
+</li>
+
+
+<li>
+<a href="settings.html">
+<i class="fa-solid fa-gear"></i>
+Settings
+</a>
+</li>
+
+</ul>
+
+</aside>
+
+
+<!-- =========================
+     MAIN CONTENT
+========================= -->
+
+<main class="content">
+
+
+<header class="header">
+
+<div>
+
+<h1>Auto Remediation</h1>
+
+<p>
+Detect, remediate and verify CSPM violations
+</p>
+
+</div>
+
+</header>
+
+
+<!-- =========================
+     SUMMARY CARDS
+========================= -->
+
+<section class="remediation-cards">
+
+
+<div class="rem-card">
+
+<i class="fa-solid fa-triangle-exclamation"></i>
+
+<h4>Total Violations</h4>
+
+<h2 id="totalViolations">—</h2>
+
+</div>
+
+
+<div class="rem-card">
+
+<i class="fa-solid fa-server"></i>
+
+<h4>Affected VMs</h4>
+
+<h2 id="affectedVMs">—</h2>
+
+</div>
+
+
+<div class="rem-card">
+
+<i class="fa-solid fa-screwdriver-wrench"></i>
+
+<h4>Fixes Applied</h4>
+
+<h2 id="fixesApplied">—</h2>
+
+</div>
+
+
+<div class="rem-card">
+
+<i class="fa-solid fa-circle-check"></i>
+
+<h4>Remediation Status</h4>
+
+<h2 id="remediationStatus">—</h2>
+
+</div>
+
+
+</section>
+
+
+<!-- =========================
+     CSPM REMEDIATION
+========================= -->
+
+<div class="panel">
+
+<h2>
+
+<i class="fa-solid fa-shield-halved"></i>
+
+CSPM Remediation
+
+</h2>
+
+
+<div class="approval-box">
+
+<strong>
+
+<i class="fa-solid fa-circle-info"></i>
+
+Real CSPM remediation
+
+</strong>
+
+
+<p>
+The current CSPM report is loaded directly from the
+Flask backend. The remediation action executes the
+configured Ansible remediation process and performs
+a verification scan afterwards.
+</p>
+
+
+<div class="action-buttons">
+
+<button
+id="remediateButton"
+class="rem-btn btn-approve">
+
+<i class="fa-solid fa-screwdriver-wrench"></i>
+
+Auto Remediate
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- =========================
+     CURRENT FINDINGS
+========================= -->
+
+<div class="panel">
+
+<h2>
+
+<i class="fa-solid fa-list-check"></i>
+
+Current CSPM Findings
+
+</h2>
+
+
+<div id="realFindings">
+
+<div class="approval-box">
+
+<i class="fa-solid fa-spinner fa-spin"></i>
+
+Loading current CSPM report...
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- =========================
+     REMEDIATION RESULT
+========================= -->
+
+<div class="panel">
+
+<h2>
+
+<i class="fa-solid fa-circle-check"></i>
+
+Remediation Result
+
+</h2>
+
+
+<div id="remediationResult">
+
+<div class="approval-box">
+
+<strong>
+
+<i class="fa-solid fa-circle-info"></i>
+
+No remediation executed yet.
+
+</strong>
+
+
+<p>
+Run Auto Remediate to execute the real CSPM
+remediation process.
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+
+</main>
+
+
+<!-- =========================
+     JAVASCRIPT
+========================= -->
+
+<script src="js/remediation.js"></script>
+
+
+</body>
+
+</html>

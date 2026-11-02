@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Settings</title>
+
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/sidebar.css">
+<link rel="stylesheet" href="css/cards.css">
+<link rel="stylesheet" href="css/tables.css">
+<link rel="stylesheet" href="css/animations.css">
+<link rel="stylesheet" href="css/responsive.css">
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+</head>
+
+<body>
+
+<aside class="sidebar">
+
+<div class="logo">
+
+<i class="fa-solid fa-shield-halved"></i>
+
+<h2>CSPM</h2>
+
+</div>
+
+<ul>
+
+<li><a href="index.html"><i class="fa-solid fa-chart-line"></i> Dashboard</a></li>
+
+<li><a href="vm.html"><i class="fa-solid fa-server"></i> Virtual Machines</a></li>
+
+<li><a href="compliance.html"><i class="fa-solid fa-shield"></i> Compliance</a></li>
+
+<li><a href="security.html"><i class="fa-solid fa-lock"></i> Security</a></li>
+
+<li><a href="drift.html"><i class="fa-solid fa-arrow-right-arrow-left"></i> Drift Detection</a></li>
+
+
+
+<li><a href="patch.html"><i class="fa-solid fa-download"></i> Patch Management</a></li>
+
+<li><a href="remediation.html"><i class="fa-solid fa-screwdriver-wrench"></i> Remediation</a></li>
+
+<li><a href="reports.html"><i class="fa-solid fa-file-lines"></i> Reports</a></li>
+
+<li class="active"><a href="settings.html"><i class="fa-solid fa-gear"></i> Settings</a></li>
+
+</ul>
+
+</aside>
+
+<main class="content">
+
+<header class="header">
+
+<div>
+
+<h1>System Settings</h1>
+
+<p>Advanced Private Cloud CSPM Configuration</p>
+
+</div>
+
+</header>
+
+<section class="cards">
+
+<div class="card">
+
+<i class="fa-solid fa-user"></i>
+
+<h3>Administrator</h3>
+
+<h1>Admin</h1>
+
+</div>
+
+<div class="card">
+
+<i class="fa-solid fa-clock"></i>
+
+<h3>Scan Interval</h3>
+
+<h1>30 Min</h1>
+
+</div>
+
+<div class="card">
+
+<i class="fa-solid fa-bell"></i>
+
+<h3>Alerts</h3>
+
+<h1>Enabled</h1>
+
+</div>
+
+<div class="card">
+
+<i class="fa-solid fa-database"></i>
+
+<h3>Database</h3>
+
+<h1>SQLite</h1>
+
+</div>
+
+</section>
+
+<div class="panel">
+
+<h2>Application Settings</h2>
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>Setting</th>
+
+<th>Current Value</th>
+
+<th>Status</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td>Automatic Scan</td>
+
+<td>Enabled</td>
+
+<td><span class="badge pass">ON</span></td>
+
+</tr>
+
+<tr>
+
+<td>Email Notification</td>
+
+<td>Enabled</td>
+
+<td><span class="badge pass">ON</span></td>
+
+</tr>
+
+<tr>
+
+<td>Auto Remediation</td>
+
+<td>Approval Required</td>
+
+<td><span class="badge info">Configured</span></td>
+
+</tr>
+
+<tr>
+
+<td>Report Format</td>
+
+<td>PDF & JSON</td>
+
+<td><span class="badge pass">Ready</span></td>
+
+</tr>
+
+<tr>
+
+<td>Dashboard Theme</td>
+
+<td>Dark Mode</td>
+
+<td><span class="badge pass">Active</span></td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+<div class="panel">
+
+<h2>System Information</h2>
+
+<p><b>Controller :</b> Kali Linux</p>
+
+<p><b>Target VM :</b> Ubuntu Server 24.04</p>
+
+<p><b>Automation :</b> Ansible</p>
+
+<p><b>Monitoring :</b> Prometheus</p>
+
+<p><b>Dashboard :</b> Grafana (Planned Integration)</p>
+
+<p><b>Database :</b> SQLite</p>
+
+<p><b>Version :</b> CSPM v1.0</p>
+
+</div>
+
+</main>
+
+</body>
+
+</html>
